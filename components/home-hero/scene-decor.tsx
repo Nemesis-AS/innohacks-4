@@ -6,11 +6,11 @@ import { OakTree } from "./oak-tree";
 
 /**
  * Oak tree and player standee on the grass, off to the right of the hero content.
- * Gentle idle motion (tree sway, player bob) so the scene doesn't feel static.
+ * Gentle idle motion (player bob) so the scene doesn't feel static.
  */
 export function SceneDecor() {
   return (
-    <div className="absolute inset-x-0 bottom-16 z-[5] flex justify-end pointer-events-none px-[6%] md:px-[10%]">
+    <div className="absolute inset-x-0 bottom-16 z-[5] flex justify-end pointer-events-none pl-[6%] pr-[2%] md:pl-[10%] md:pr-[4%]">
       <div className="flex items-end gap-2 md:gap-4">
         <motion.img
           src={playerImg.src}

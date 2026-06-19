@@ -8,8 +8,8 @@ const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospac
 
 type BlockSectionProps = {
   id: string;
-  eyebrow: string;
-  title: string;
+  eyebrow?: string;
+  title?: string;
   texture?: StaticImageData;
   fallbackColor: string;
   tileSize?: number;
@@ -17,6 +17,10 @@ type BlockSectionProps = {
   oreTextures?: StaticImageData[];
   /** Disable the 1-block jagged seam, e.g. when a dedicated BlockTransition already handles this boundary. */
   seam?: boolean;
+  /** "center" stacks eyebrow/title/children in a narrow centered column (default). "left" widens the column and left-aligns content, for layouts that build their own internal grid. */
+  align?: "center" | "left";
+  /** Override the default max-width column (max-w-2xl centered / max-w-5xl left), e.g. for a wide card grid. */
+  maxWidthClassName?: string;
   children?: ReactNode;
 };
 
@@ -31,8 +35,12 @@ export function BlockSection({
   textColor = "#f5f5f0",
   oreTextures,
   seam = true,
+  align = "center",
+  maxWidthClassName,
   children,
 }: BlockSectionProps) {
+  const isLeft = align === "left";
+
   return (
     <section id={id} className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-24">
       <BlockBackground texture={texture} fallbackColor={fallbackColor} tileSize={tileSize} />
@@ -40,19 +48,27 @@ export function BlockSection({
         <OreOverlay textures={oreTextures} seed={seedFromId(id)} tileSize={tileSize} />
       )}
       {seam && <BlockSeam seed={seedFromId(id)} color={fallbackColor} textureSrc={texture?.src} />}
-      <div className="relative z-10 flex max-w-2xl flex-col items-center gap-4 text-center">
-        <span
-          className="text-xs uppercase tracking-[0.3em] md:text-sm"
-          style={{ color: textColor, fontFamily: PIXEL_FONT, opacity: 0.75 }}
-        >
-          {eyebrow}
-        </span>
-        <h2
-          className="text-3xl uppercase md:text-5xl"
-          style={{ color: textColor, fontFamily: PIXEL_FONT, textShadow: "3px 3px 0 rgba(0,0,0,0.35)" }}
-        >
-          {title}
-        </h2>
+      <div
+        className={`relative z-10 flex w-full flex-col gap-4 ${
+          maxWidthClassName ?? (isLeft ? "max-w-5xl" : "max-w-2xl")
+        } ${isLeft ? "items-stretch text-left" : "items-center text-center"}`}
+      >
+        {eyebrow && (
+          <span
+            className="text-xs uppercase tracking-[0.3em] md:text-sm"
+            style={{ color: textColor, fontFamily: PIXEL_FONT, opacity: 0.75 }}
+          >
+            {eyebrow}
+          </span>
+        )}
+        {title && (
+          <h2
+            className="text-3xl uppercase md:text-5xl"
+            style={{ color: textColor, fontFamily: PIXEL_FONT, textShadow: "3px 3px 0 rgba(0,0,0,0.35)" }}
+          >
+            {title}
+          </h2>
+        )}
         {children}
       </div>
     </section>

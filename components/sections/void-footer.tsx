@@ -17,12 +17,6 @@ export function VoidFooter() {
       <VoidNoiseBackground />
       <BlockSeam seed={seedFromId("void-footer")} color="#0a0a0e" />
       <div className="relative z-10 flex flex-col items-center gap-6 text-center">
-        <span
-          className="text-xs uppercase tracking-[0.3em] text-white/60 md:text-sm"
-          style={{ fontFamily: PIXEL_FONT }}
-        >
-          The Void
-        </span>
         <h2
           className="text-2xl uppercase text-white md:text-3xl"
           style={{ fontFamily: PIXEL_FONT, textShadow: "3px 3px 0 rgba(0,0,0,0.5)" }}

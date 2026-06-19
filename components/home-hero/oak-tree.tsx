@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import oakLeavesTexture from "@/assets/oak_leaves.png";
 import oakLogTexture from "@/assets/oak_log.png";
 
@@ -19,10 +18,10 @@ const BLOCK_SIZE = 64; // same block size used across the site (floating island,
 const COLS = TREE_GRID[0].length;
 const ROWS = TREE_GRID.length;
 
-/** Small oak tree composed from log/leaves block tiles, gently swaying. */
+/** Small oak tree composed from log/leaves block tiles. */
 export function OakTree({ className }: { className?: string }) {
   return (
-    <motion.div
+    <div
       className={className}
       style={{
         width: COLS * BLOCK_SIZE,
@@ -30,10 +29,7 @@ export function OakTree({ className }: { className?: string }) {
         display: "grid",
         gridTemplateColumns: `repeat(${COLS}, ${BLOCK_SIZE}px)`,
         gridTemplateRows: `repeat(${ROWS}, ${BLOCK_SIZE}px)`,
-        transformOrigin: "bottom center",
       }}
-      animate={{ rotate: [-1.5, 1.5, -1.5] }}
-      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
     >
       {TREE_GRID.flatMap((row, r) =>
         row.map((cell, c) => {
@@ -51,6 +47,6 @@ export function OakTree({ className }: { className?: string }) {
           );
         }),
       )}
-    </motion.div>
+    </div>
   );
 }

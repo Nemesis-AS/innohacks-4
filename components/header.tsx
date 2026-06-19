@@ -1,7 +1,7 @@
 "use client";
 
 import { useLenis } from "lenis/react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useState, type MouseEvent } from "react";
 import dirtTexture from "@/assets/dirt.png";
 import grassTexture from "@/assets/grass.png";
@@ -30,6 +30,7 @@ export function Header() {
   const { scrollY } = useScroll();
   const lenis = useLenis();
   const [fadeStart, setFadeStart] = useState(Number.POSITIVE_INFINITY);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const measure = () => {
@@ -46,6 +47,7 @@ export function Header() {
   const pointerEvents = useTransform(opacity, (value) => (value > 0.05 ? "auto" : "none"));
 
   const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    setIsMenuOpen(false);
     const target = document.querySelector(href);
     if (!target) return;
     event.preventDefault();
@@ -79,7 +81,8 @@ export function Header() {
             backgroundRepeat: "repeat",
             imageRendering: "pixelated",
             border: "2px solid #1f2e14",
-            borderRadius: "0 0 14px 14px",
+            borderBottom: isMenuOpen ? "none" : "2px solid #1f2e14",
+            borderRadius: isMenuOpen ? "0" : "0 0 14px 14px",
             boxShadow: "0 10px 28px rgba(0,0,0,0.4)",
           }}
         >
@@ -95,20 +98,77 @@ export function Header() {
               style={{ imageRendering: "pixelated" }}
             />
           </a>
-          <nav className="flex items-center gap-0.5 md:gap-1.5">
+          <nav className="hidden items-center gap-1.5 md:flex">
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
                 onClick={(event) => handleNavClick(event, link.href)}
-                className="px-2 py-1.5 text-[10px] uppercase tracking-[0.15em] text-white/85 transition-colors hover:text-white md:px-3 md:text-xs"
+                className="px-3 py-1.5 text-xs uppercase tracking-[0.15em] text-white/85 transition-colors hover:text-white"
                 style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.6)" }}
               >
                 {link.label}
               </a>
             ))}
           </nav>
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-expanded={isMenuOpen}
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="flex shrink-0 flex-col items-center justify-center gap-1.5 p-2 md:hidden"
+          >
+            <span
+              className="block h-[2px] w-5 bg-white/85 transition-transform"
+              style={{ transform: isMenuOpen ? "translateY(8px) rotate(45deg)" : "none" }}
+            />
+            <span
+              className="block h-[2px] w-5 bg-white/85 transition-opacity"
+              style={{ opacity: isMenuOpen ? 0 : 1 }}
+            />
+            <span
+              className="block h-[2px] w-5 bg-white/85 transition-transform"
+              style={{ transform: isMenuOpen ? "translateY(-8px) rotate(-45deg)" : "none" }}
+            />
+          </button>
         </div>
+        <AnimatePresence initial={false}>
+          {isMenuOpen && (
+            <motion.div
+              key="mobile-nav"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="overflow-hidden md:hidden"
+              style={{
+                backgroundImage: `url(${dirtTexture.src})`,
+                backgroundSize: `${DIRT_TILE}px ${DIRT_TILE}px`,
+                backgroundRepeat: "repeat",
+                imageRendering: "pixelated",
+                borderLeft: "2px solid #1f2e14",
+                borderRight: "2px solid #1f2e14",
+                borderBottom: "2px solid #1f2e14",
+                borderRadius: "0 0 14px 14px",
+                boxShadow: "0 10px 28px rgba(0,0,0,0.4)",
+              }}
+            >
+              <nav className="flex flex-col px-4 py-2">
+                {NAV_LINKS.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={(event) => handleNavClick(event, link.href)}
+                    className="border-t border-white/10 px-2 py-2.5 text-[11px] uppercase tracking-[0.15em] text-white/85 transition-colors first:border-t-0 hover:text-white"
+                    style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.6)" }}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.header>
   );
