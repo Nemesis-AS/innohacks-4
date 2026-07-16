@@ -1,35 +1,108 @@
-import { PixelChip } from "@/components/home-hero/minecraft-ui";
-import { BlockSeam, seedFromId } from "./block-seam";
+import bedrockTexture from "@/assets/bedrock.png";
+import logoImg from "@/assets/innohacks-logo.png";
+import { AdvancementToast } from "./advancement-toast";
+import { SocialLinks } from "./social-links";
 import { VoidNoiseBackground } from "./void-noise-background";
-
-const SOCIAL_LINKS = [
-  { label: "Instagram", href: "https://instagram.com/innogeeks" },
-  { label: "LinkedIn", href: "https://linkedin.com/company/innogeeks" },
-  { label: "X", href: "https://x.com/innogeeks" },
-  { label: "Discord", href: "https://discord.gg/innogeeks" },
-];
 
 const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
 
+// Placeholder venue lines — confirm the exact street address before launch.
+const VENUE = ["KIET Deemed to be University", "Delhi-Meerut Road, Ghaziabad", "Uttar Pradesh 201206, India"];
+
+// Placeholder contact details — swap in the real inbox and phone number.
+const CONTACTS = [
+  { label: "innohacks@innogeeks.in", href: "mailto:innohacks@innogeeks.in" },
+  // { label: "+91 00000 00000", href: "tel:+910000000000" },
+];
+
+// Placeholder destinations — the brochure and code of conduct still need real URLs.
+const QUICK_LINKS = [
+  { label: "Sponsorship Brochure", href: "#" },
+  { label: "About Innogeeks", href: "https://innogeeks.in" },
+  { label: "Code of Conduct", href: "#" },
+  { label: "FAQs", href: "#faqs" },
+];
+
+function ColumnHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h3
+      className="text-xs uppercase tracking-[0.2em] text-white md:text-sm"
+      style={{ fontFamily: PIXEL_FONT, textShadow: "2px 2px 0 rgba(0,0,0,0.5)" }}
+    >
+      {children}
+    </h3>
+  );
+}
+
 export function VoidFooter() {
   return (
-    <footer className="relative flex min-h-screen flex-col items-center justify-center gap-8 overflow-hidden px-6 py-24">
+    <footer className="relative flex flex-col items-center justify-center gap-12 overflow-hidden px-6 py-12 md:py-20">
       <VoidNoiseBackground />
-      <BlockSeam seed={seedFromId("void-footer")} color="#0a0a0e" />
-      <div className="relative z-10 flex flex-col items-center gap-6 text-center">
-        <h2
-          className="text-2xl uppercase text-white md:text-3xl"
-          style={{ fontFamily: PIXEL_FONT, textShadow: "3px 3px 0 rgba(0,0,0,0.5)" }}
-        >
-          InnoHacks 4.0
-        </h2>
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          {SOCIAL_LINKS.map((link) => (
-            <PixelChip key={link.label} href={link.href}>
-              {link.label}
-            </PixelChip>
-          ))}
+
+      <div className="relative z-10 grid w-full max-w-6xl gap-12 md:grid-cols-3 md:items-start md:gap-8">
+        {/* Left: identity and venue. */}
+        <div className="flex flex-col items-center gap-4 text-center md:items-start md:text-left">
+          <img
+            src={logoImg.src}
+            alt="InnoHacks 4.0"
+            className="h-10 w-auto md:h-12"
+            style={{ imageRendering: "pixelated" }}
+          />
+          <address className="flex flex-col gap-1 not-italic">
+            {VENUE.map((line) => (
+              <span key={line} className="text-xs text-white/70 md:text-sm" style={{ fontFamily: PIXEL_FONT }}>
+                {line}
+              </span>
+            ))}
+          </address>
         </div>
+
+        {/* Center: the reward for scrolling the whole way down, plus socials. */}
+        <div className="flex flex-col items-center gap-6">
+          <AdvancementToast name="The Bottom of the World" icon={bedrockTexture} />
+          <SocialLinks />
+        </div>
+
+        {/* Right: contact and quick links. */}
+        <div className="flex flex-col items-center gap-8 text-center md:items-end md:text-right">
+          <div className="flex flex-col items-center gap-3 md:items-end">
+            <ColumnHeading>Contact Us</ColumnHeading>
+            <div className="flex flex-col gap-1.5">
+              {CONTACTS.map((contact) => (
+                <a
+                  key={contact.label}
+                  href={contact.href}
+                  className="text-xs text-white/70 transition-colors hover:text-white md:text-sm"
+                  style={{ fontFamily: PIXEL_FONT }}
+                >
+                  {contact.label}
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col items-center gap-3 md:items-end">
+            <ColumnHeading>Quick Links</ColumnHeading>
+            <nav className="flex flex-col gap-1.5">
+              {QUICK_LINKS.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-xs text-white/70 transition-colors hover:text-white md:text-sm"
+                  style={{ fontFamily: PIXEL_FONT }}
+                >
+                  {link.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-10 w-full max-w-6xl border-t border-white/10 pt-6">
+        <p className="text-center text-[10px] uppercase tracking-[0.15em] text-white/45 md:text-xs" style={{ fontFamily: PIXEL_FONT }}>
+          © 2026 Innogeeks · KIET Deemed to be University
+        </p>
       </div>
     </footer>
   );

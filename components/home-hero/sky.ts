@@ -18,9 +18,65 @@ const SKY_STOPS: SkyStop[] = [
 
 const rgb = ([r, g, b]: RGB) => `rgb(${r}, ${g}, ${b})`;
 
-export const SKY_STOP_POSITIONS = SKY_STOPS.map((s) => s.progress);
-export const SKY_TOP_COLORS = SKY_STOPS.map((s) => rgb(s.top));
-export const SKY_BOTTOM_COLORS = SKY_STOPS.map((s) => rgb(s.bottom));
+// The cycle above is authored over a full 0..1 day/night rotation, but the hero
+// scroll is cut off at CYCLE_CUTOFF — the moment the moon reaches the edge of the
+// viewport, just before it would start fading out. The hero therefore ends mid
+// night-to-day transition, with the moon still fully opaque.
+export const CYCLE_CUTOFF = 0.97;
+
+/** Maps a point in the cycle onto hero scroll progress, which ends at the cutoff. */
+export const cycleProgress = (p: number) => p / CYCLE_CUTOFF;
+
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const lerpRgb = (a: RGB, b: RGB, t: number): RGB => [
+  Math.round(lerp(a[0], b[0], t)),
+  Math.round(lerp(a[1], b[1], t)),
+  Math.round(lerp(a[2], b[2], t)),
+];
+
+/**
+ * Rescales cycle keyframes onto scroll progress and truncates them at the cutoff,
+ * ending the range at exactly 1 with the value the cycle holds there.
+ *
+ * Truncating matters: scroll-linked opacity is handed to the browser as a native
+ * ScrollTimeline animation, where these stops become WAAPI keyframe offsets and
+ * must stay within [0,1]. Leaving stops past the cutoff above 1 throws.
+ */
+function cycleKeyframes<T>(
+  stops: number[],
+  values: T[],
+  lerpValue: (a: T, b: T, t: number) => T,
+): [number[], T[]] {
+  const outStops: number[] = [];
+  const outValues: T[] = [];
+
+  for (let i = 0; i < stops.length; i++) {
+    const stop = cycleProgress(stops[i]);
+    if (stop < 1) {
+      outStops.push(stop);
+      outValues.push(values[i]);
+      continue;
+    }
+    // First stop at or past the cutoff: land it on 1, at the interpolated value.
+    const previous = i === 0 ? 0 : cycleProgress(stops[i - 1]);
+    outStops.push(1);
+    outValues.push(i === 0 ? values[0] : lerpValue(values[i - 1], values[i], (1 - previous) / (stop - previous)));
+    break;
+  }
+
+  return [outStops, outValues];
+}
+
+/** Cycle keyframes for a numeric `useTransform`, ready to spread as (inputRange, outputRange). */
+export const cycleNumbers = (stops: number[], values: number[]) => cycleKeyframes(stops, values, lerp);
+
+const skyProgress = SKY_STOPS.map((s) => s.progress);
+const [skyStops, skyTops] = cycleKeyframes(skyProgress, SKY_STOPS.map((s) => s.top), lerpRgb);
+const [, skyBottoms] = cycleKeyframes(skyProgress, SKY_STOPS.map((s) => s.bottom), lerpRgb);
+
+export const SKY_STOP_POSITIONS = skyStops;
+export const SKY_TOP_COLORS = skyTops.map(rgb);
+export const SKY_BOTTOM_COLORS = skyBottoms.map(rgb);
 
 export function withAlpha(rgbColor: string, alpha: number) {
   return rgbColor.replace("rgb(", "rgba(").replace(")", `, ${alpha})`);

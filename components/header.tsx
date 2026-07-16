@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: "About", href: "#about" },
   { label: "Tracks", href: "#tracks" },
   { label: "Timeline", href: "#timeline" },
+  { label: "Sponsors", href: "#sponsors" },
   { label: "Events", href: "#previous-events" },
   { label: "FAQs", href: "#faqs" },
 ];

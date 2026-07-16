@@ -14,7 +14,7 @@ import { Ground } from "./ground";
 import { SceneDecor } from "./scene-decor";
 import { SkyBackdrop } from "./sky-backdrop";
 import { Starfield } from "./starfield";
-import { SKY_BOTTOM_COLORS, SKY_STOP_POSITIONS, SKY_TOP_COLORS, withAlpha } from "./sky";
+import { cycleNumbers, cycleProgress, SKY_BOTTOM_COLORS, SKY_STOP_POSITIONS, SKY_TOP_COLORS, withAlpha } from "./sky";
 import { useTrajectory } from "./use-trajectory";
 import { useViewportSize } from "./use-viewport-size";
 
@@ -23,30 +23,25 @@ const SUN_GLOW = "drop-shadow(0 0 24px rgba(255, 230, 120, 0.85)) drop-shadow(0 
 const MOON_GLOW =
   "drop-shadow(0 0 22px rgba(220, 230, 255, 0.95)) drop-shadow(0 0 60px rgba(180, 200, 255, 0.7)) drop-shadow(0 0 110px rgba(150, 180, 255, 0.4))";
 
-type SkyPhase = "day" | "night" | "dawn";
+// Sunset starts here; past it the logo and glass panel take their night styling.
+const NIGHTFALL = cycleProgress(0.5);
 
-const phaseLabel: Record<SkyPhase, string> = {
-  day: "☀ Scroll to pass the day",
-  night: "✦ Night has fallen",
-  dawn: "☀ Dawn breaks",
-};
-
-function phaseAt(progress: number): SkyPhase {
-  if (progress < 0.5) return "day";
-  if (progress < 0.95) return "night";
-  return "dawn";
-}
+const NIGHT_AMOUNT = cycleNumbers([0, 0.5, 0.62, 0.95, 1], [0, 0, 1, 1, 0]);
+const SUN_CP = cycleNumbers([0, 0.55], [0.08, 1.4]);
+const MOON_CP = cycleNumbers([0.45, 1], [-0.4, 0.93]);
+const SUN_OPACITY = cycleNumbers([0, 0.52, 0.6], [1, 1, 0]);
+const MOON_OPACITY = cycleNumbers([0.4, 0.5, 0.97, 1], [0, 1, 1, 0]);
 
 /** Scroll-driven Minecraft-style day/night cycle hero, with a sun and moon arcing across the sky. */
 export function HomeHero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: progress } = useScroll({ target: heroRef, offset: ["start start", "end end"] });
   const { width, height } = useViewportSize();
-  const [phase, setPhase] = useState<SkyPhase>("day");
+  const [isDay, setIsDay] = useState(true);
 
   useMotionValueEvent(progress, "change", (value) => {
-    const next = phaseAt(value);
-    setPhase((current) => (current === next ? current : next));
+    const next = value < NIGHTFALL;
+    setIsDay((current) => (current === next ? current : next));
   });
 
   const skyTop = useTransform(progress, SKY_STOP_POSITIONS, SKY_TOP_COLORS);
@@ -60,18 +55,16 @@ export function HomeHero() {
     (bottom) => `linear-gradient(to bottom, transparent 0%, ${withAlpha(bottom, 0.85)} 55%, ${bottom} 100%)`,
   );
 
-  const nightAmount = useTransform(progress, [0, 0.5, 0.62, 0.95, 1], [0, 0, 1, 1, 0]);
+  const nightAmount = useTransform(progress, ...NIGHT_AMOUNT);
 
-  const sunCp = useTransform(progress, [0, 0.55], [0.08, 1.4]);
-  const moonCp = useTransform(progress, [0.45, 1], [-0.4, 0.93]);
-  const sunOpacity = useTransform(progress, [0, 0.52, 0.6], [1, 1, 0]);
-  const moonOpacity = useTransform(progress, [0.4, 0.5, 0.97, 1], [0, 1, 1, 0]);
+  const sunCp = useTransform(progress, ...SUN_CP);
+  const moonCp = useTransform(progress, ...MOON_CP);
+  const sunOpacity = useTransform(progress, ...SUN_OPACITY);
+  const moonOpacity = useTransform(progress, ...MOON_OPACITY);
   const size = useTransform([width, height], ([w, h]) => Math.round(Math.min(w as number, h as number) * 0.13));
 
   const sunPos = useTrajectory(sunCp, width, height);
   const moonPos = useTrajectory(moonCp, width, height);
-
-  const isDay = phase === "day";
 
   return (
     <>
@@ -103,16 +96,6 @@ export function HomeHero() {
             <div className="mt-6">
               <GlassPanel isDay={isDay}>
                 <EventInfo />
-                <p
-                  className="text-xs md:text-sm tracking-[0.3em] uppercase"
-                  style={{
-                    color: "#f5ead0",
-                    textShadow: "2px 2px 0 rgba(0,0,0,0.55)",
-                    fontFamily: "var(--font-minecraft), ui-monospace, 'Courier New', monospace",
-                  }}
-                >
-                  {phaseLabel[phase]}
-                </p>
               </GlassPanel>
             </div>
           </section>

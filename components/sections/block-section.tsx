@@ -27,7 +27,7 @@ type BlockSectionProps = {
 /** Full-screen page section with a tiled block-texture (or placeholder) background. */
 export function BlockSection({
   id,
-  eyebrow,
+  // eyebrow,
   title,
   texture,
   fallbackColor,

@@ -36,7 +36,6 @@ export function TimelineSection() {
       fallbackColor="#3a3a3e"
       oreTextures={[coalDeepslateTexture, ironDeepslateTexture, diamondDeepslateTexture]}
       seam={false}
-      align="left"
       maxWidthClassName="max-w-4xl"
     >
       <div className="relative flex flex-col gap-14 py-6">
