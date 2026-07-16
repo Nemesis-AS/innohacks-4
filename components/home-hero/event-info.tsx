@@ -3,7 +3,7 @@
 import { DevfolioButton } from "./devfolio-button";
 import { PixelBadge } from "./minecraft-ui";
 
-const EVENT_DATES = "Oct 2–3, 2026";
+const EVENT_DATES = "Oct 3–4, 2026";
 
 /** Headline, dates, and the register CTA shown beneath the logo. */
 export function EventInfo() {

@@ -6,10 +6,10 @@ export const EVENT = {
   name: "InnoHacks 4.0",
   organizer: "Innogeeks",
   /** Human-readable form used in copy and on the OG card. */
-  dates: "Oct 2–3, 2026",
+  dates: "Oct 3–4, 2026",
   /** ISO 8601, for schema.org. */
-  startDate: "2026-10-02",
-  endDate: "2026-10-03",
+  startDate: "2026-10-03",
+  endDate: "2026-10-04",
   venue: {
     name: "KIET Deemed to be University",
     street: "Delhi-Meerut Road",
