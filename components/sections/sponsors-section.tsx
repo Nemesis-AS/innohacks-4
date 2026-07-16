@@ -29,6 +29,8 @@ type Sponsor = {
   href?: string;
   /** Backing plate behind the logo, for marks that don't carry on the gray slot. */
   logoBg?: string;
+  /** Defaults to name. Override when the logo needs different alt text. */
+  alt?: string;
 };
 
 type Tier = {
@@ -52,7 +54,14 @@ const TIERS: Tier[] = [
 
 // Add sponsors here as they're confirmed. Unclaimed slots render empty.
 const SPONSORS: Sponsor[] = [
-  { name: "Devfolio", tier: "hosting", logo: devfolioLogo, href: "https://devfolio.co", logoBg: "#ffffff" },
+  {
+    name: "Devfolio",
+    tier: "hosting",
+    logo: devfolioLogo,
+    href: "https://devfolio.co",
+    logoBg: "#ffffff",
+    alt: "DEVFOLIO LOGO",
+  },
 ];
 
 /** One inventory slot: dark bevel top-left, light bevel bottom-right, like the vanilla GUI. */
@@ -75,7 +84,7 @@ function Slot({
           className="flex h-full w-full items-center justify-center px-3 py-2"
           style={sponsor.logoBg ? { backgroundColor: sponsor.logoBg } : undefined}
         >
-          <img src={sponsor.logo.src} alt={sponsor.name} className="max-h-full max-w-full object-contain" />
+          <img src={sponsor.logo.src} alt={sponsor.alt ?? sponsor.name} className="max-h-full max-w-full object-contain" />
         </span>
       )}
       {sponsor?.href && (
