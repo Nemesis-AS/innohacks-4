@@ -13,7 +13,6 @@ export function PreviousEventsSection() {
   return (
     <BlockSection
       id="previous-events"
-      eyebrow="Netherrack Block"
       title="Previous Events"
       texture={netherrackTexture}
       fallbackColor="#5b2b2b"

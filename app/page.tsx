@@ -41,6 +41,7 @@ export default function Home() {
       <PreviousEventsSection />
       <BlockTransition id="bedrock-endstone-transition" top={netherrackTexture} bottom={bedrockTexture} />
       <BlockTransition id="bedrock-endstone-transition" top={bedrockTexture} bottom={endstoneTexture} />
+      {/* <BlockTransition id="bedrock-endstone-transitions" top={netherrackTexture} bottom={endstoneTexture} /> */}
       {/* <BlockTransition id="previous-events-faq" top={netherrackTexture} bottom={endstoneTexture} /> */}
       <FaqSection />
       <FloatingIslandBase texture={endstoneTexture} />

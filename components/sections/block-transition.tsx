@@ -2,10 +2,10 @@
 
 import type { StaticImageData } from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { BLOCK_SIZE } from "@/util/constants";
 import { mulberry32, seedFromId } from "./block-seam";
 
 const ROWS = 3;
-const BLOCK_SIZE = 64;
 const SPECKLE_CHANCE = 0.12;
 
 type BlockTransitionProps = {
@@ -35,7 +35,7 @@ function buildColumns(id: string, count: number) {
  * column, with the odd stray block flipped near the boundary for an eroded look.
  *
  * Column count is derived from the measured width (width / BLOCK_SIZE) rather than a
- * fixed number, so every tile stays a true 64x64 square at any viewport size.
+ * fixed number, so every tile stays a true 32x32 square at any viewport size.
  */
 export function BlockTransition({ id, top, bottom }: BlockTransitionProps) {
   const containerRef = useRef<HTMLDivElement>(null);

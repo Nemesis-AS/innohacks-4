@@ -2,6 +2,7 @@
 
 import oakLeavesTexture from "@/assets/oak_leaves.png";
 import oakLogTexture from "@/assets/oak_log.png";
+import { BLOCK_SIZE } from "@/util/constants";
 
 // 0 = empty, 1 = leaves, 2 = log — a small hand-authored oak tree built from block tiles.
 const TREE_GRID = [
@@ -14,7 +15,6 @@ const TREE_GRID = [
   [0, 0, 2, 0, 0],
 ];
 
-const BLOCK_SIZE = 64; // same block size used across the site (floating island, transitions, etc.)
 const COLS = TREE_GRID[0].length;
 const ROWS = TREE_GRID.length;
 

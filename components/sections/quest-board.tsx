@@ -1,4 +1,5 @@
 const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+const INK = "#3a2a17";
 const CONTACT_EMAIL = "team@innohacks.example"; // TODO: replace with real contact address
 
 type Quest = {
@@ -36,35 +37,24 @@ const QUESTS: Quest[] = [
 
 export function QuestBoard() {
   return (
-    <div
-      className="flex flex-col gap-4 p-5"
-      style={{
-        backgroundColor: "#6b4423",
-        border: "3px solid #3a2615",
-        boxShadow: "0 10px 0 rgba(0,0,0,0.3), 0 14px 28px rgba(0,0,0,0.35)",
-      }}
-    >
+    <div className="flex h-full flex-col gap-4">
       <span
-        className="text-center text-xs uppercase tracking-[0.3em] text-white/75 md:text-sm"
-        style={{ fontFamily: PIXEL_FONT }}
+        className="text-center text-sm uppercase tracking-[0.3em] md:text-base"
+        style={{ fontFamily: PIXEL_FONT, color: INK, fontWeight: 700 }}
       >
         Notice Board
       </span>
 
-      {QUESTS.map((quest) => (
+      {QUESTS.map((quest, index) => (
         <div
           key={quest.role}
-          className="flex flex-col gap-2 p-3"
-          style={{
-            border: `2px solid ${quest.rarityColor}`,
-            boxShadow: `inset 0 0 0 2px rgba(0,0,0,0.5)`,
-            backgroundColor: "rgba(0,0,0,0.45)",
-          }}
+          className={`flex flex-col gap-1.5 pb-3 ${index < QUESTS.length - 1 ? "border-b border-dashed" : ""}`}
+          style={{ borderColor: `${INK}40` }}
         >
-          <span className="text-sm uppercase text-white md:text-base" style={{ fontFamily: PIXEL_FONT }}>
+          <span className="text-lg md:text-xl" style={{ fontFamily: PIXEL_FONT, color: INK, fontWeight: 600 }}>
             {quest.icon} Quest: {quest.role}
           </span>
-          <span className="text-xs text-white/70 md:text-sm" style={{ fontFamily: PIXEL_FONT }}>
+          <span className="text-base md:text-lg" style={{ fontFamily: PIXEL_FONT, color: `${INK}cc` }}>
             {quest.reward}
           </span>
           <a

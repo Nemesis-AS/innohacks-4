@@ -1,4 +1,5 @@
 import type { StaticImageData } from "next/image";
+import { BLOCK_SIZE } from "@/util/constants";
 
 type BlockBackgroundProps = {
   texture?: StaticImageData;
@@ -7,7 +8,7 @@ type BlockBackgroundProps = {
 };
 
 /** Tiled block-texture background. Falls back to a flat color with a pixel grid until a real texture is supplied. */
-export function BlockBackground({ texture, fallbackColor, tileSize = 64 }: BlockBackgroundProps) {
+export function BlockBackground({ texture, fallbackColor, tileSize = BLOCK_SIZE }: BlockBackgroundProps) {
   if (texture) {
     return (
       <div

@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "motion/react";
 import coalStoneTexture from "@/assets/coal_stone.png";
 import copperStoneTexture from "@/assets/copper_stone.png";
 import ironStoneTexture from "@/assets/iron_stone.png";
@@ -33,9 +36,13 @@ export function TracksSection() {
       maxWidthClassName="max-w-5xl"
     >
       <div className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {TRACKS.map((track) => (
-          <div
+        {TRACKS.map((track, index) => (
+          <motion.div
             key={track.name}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.1 }}
             className="flex flex-col gap-2 p-5 text-left"
             style={{
               backgroundColor: track.color,
@@ -53,7 +60,7 @@ export function TracksSection() {
             <p className="text-xs text-white/85 md:text-sm" style={{ fontFamily: PIXEL_FONT }}>
               {track.description}
             </p>
-          </div>
+          </motion.div>
         ))}
       </div>
     </BlockSection>

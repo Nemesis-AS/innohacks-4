@@ -2,6 +2,7 @@
 
 import type { StaticImageData } from "next/image";
 import { useEffect, useRef, useState } from "react";
+import { BLOCK_SIZE } from "@/util/constants";
 
 function mulberry32(seed: number) {
   return function random() {
@@ -23,7 +24,7 @@ type OreOverlayProps = {
 };
 
 /** Scatters small clustered patches of ore textures over a tiled block background, like Minecraft ore veins. */
-export function OreOverlay({ textures, seed, tileSize = 64, density = 0.035 }: OreOverlayProps) {
+export function OreOverlay({ textures, seed, tileSize = BLOCK_SIZE, density = 0.035 }: OreOverlayProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [tiles, setTiles] = useState<OreTile[]>([]);
 

@@ -53,14 +53,6 @@ export function BlockSection({
           maxWidthClassName ?? (isLeft ? "max-w-5xl" : "max-w-2xl")
         } ${isLeft ? "items-stretch text-left" : "items-center text-center"}`}
       >
-        {eyebrow && (
-          <span
-            className="text-xs uppercase tracking-[0.3em] md:text-sm"
-            style={{ color: textColor, fontFamily: PIXEL_FONT, opacity: 0.75 }}
-          >
-            {eyebrow}
-          </span>
-        )}
         {title && (
           <h2
             className="text-3xl uppercase md:text-5xl"

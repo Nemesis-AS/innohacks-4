@@ -3,12 +3,14 @@
 import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/react";
 import { useRef, useState } from "react";
 import grassTexture from "@/assets/grass.png";
+import dirtTexture from "@/assets/dirt.png";
 import logoImg from "@/assets/innohacks-logo.png";
 import moonImg from "@/assets/moon.png";
 import sunImg from "@/assets/sun.png";
 import { CelestialBody } from "./celestial-body";
 import { EventInfo } from "./event-info";
 import { GlassPanel } from "./glass-panel";
+import { Ground } from "./ground";
 import { SceneDecor } from "./scene-decor";
 import { SkyBackdrop } from "./sky-backdrop";
 import { Starfield } from "./starfield";
@@ -81,16 +83,8 @@ export function HomeHero() {
           <CelestialBody src={sunImg} alt="Sun" size={size} x={sunPos.x} y={sunPos.y} opacity={sunOpacity} glow={SUN_GLOW} />
           <CelestialBody src={moonImg} alt="Moon" size={size} x={moonPos.x} y={moonPos.y} opacity={moonOpacity} glow={MOON_GLOW} />
 
-          {/* Grass layer — fixed to the bottom of the viewport for the whole hero scroll */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-16"
-            style={{
-              backgroundImage: `url(${grassTexture.src})`,
-              backgroundSize: "64px 64px",
-              backgroundRepeat: "repeat",
-              imageRendering: "pixelated",
-            }}
-          />
+          {/* Ground layer — fixed to the bottom of the viewport for the whole hero scroll */}
+          <Ground id="home-hero-ground" grass={grassTexture} dirt={dirtTexture} />
 
           <SceneDecor />
 
