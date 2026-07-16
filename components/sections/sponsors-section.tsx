@@ -27,6 +27,8 @@ type Sponsor = {
   tier: TierId;
   logo?: StaticImageData;
   href?: string;
+  /** Backing plate behind the logo, for marks that don't carry on the gray slot. */
+  logoBg?: string;
 };
 
 type Tier = {
@@ -35,29 +37,46 @@ type Tier = {
   /** Item-swatch color. Sits on the light panel, so the label text stays dark for contrast. */
   pip: string;
   slotSize: number;
+  /** Defaults to slotSize. Widened where the tier holds a wordmark rather than a square mark. */
+  slotWidth?: number;
   slotCount: number;
 };
 
 /** Ordered like a chest's rows — rarest loot at the top. Hosting partner sits directly below gold. */
 const TIERS: Tier[] = [
   { id: "gold", label: "Gold", pip: "#fcdc5f", slotSize: 128, slotCount: 4 },
-  { id: "hosting", label: "Hosting Partner", pip: "#5ff2f2", slotSize: 128, slotCount: 1 },
+  { id: "hosting", label: "Hosting Partner", pip: "#5ff2f2", slotSize: 128, slotWidth: 320, slotCount: 1 },
   { id: "silver", label: "Silver", pip: "#dcdcdc", slotSize: 104, slotCount: 6 },
   { id: "bronze", label: "Bronze", pip: "#c87137", slotSize: 84, slotCount: 8 },
 ];
 
 // Add sponsors here as they're confirmed. Unclaimed slots render empty.
 const SPONSORS: Sponsor[] = [
-  { name: "Devfolio", tier: "hosting", logo: devfolioLogo, href: "https://devfolio.co" },
+  { name: "Devfolio", tier: "hosting", logo: devfolioLogo, href: "https://devfolio.co", logoBg: "#ffffff" },
 ];
 
 /** One inventory slot: dark bevel top-left, light bevel bottom-right, like the vanilla GUI. */
-function Slot({ size, sponsor, delay }: { size: number; sponsor?: Sponsor; delay: number }) {
+function Slot({
+  size,
+  width,
+  sponsor,
+  delay,
+}: {
+  size: number;
+  width?: number;
+  sponsor?: Sponsor;
+  delay: number;
+}) {
   const body = (
     <>
       {sponsor?.logo && (
         // Real logos aren't pixel art, so these render smoothly rather than pixelated.
-        <img src={sponsor.logo.src} alt={sponsor.name} className="max-h-full max-w-full object-contain" />
+        <span
+          className="flex h-full w-full items-center justify-center px-3 py-2"
+          style={sponsor.logoBg ? { backgroundColor: sponsor.logoBg } : undefined}
+        >
+          <img src={sponsor.logo.src} alt={sponsor.name} className="max-h-full max-w-full object-contain" />
+        </span>
       )}
       {sponsor?.href && (
         <span
@@ -69,8 +88,9 @@ function Slot({ size, sponsor, delay }: { size: number; sponsor?: Sponsor; delay
   );
 
   const style = {
-    width: size,
+    width: width ?? size,
     height: size,
+    maxWidth: "100%",
     padding: BEVEL * 2,
     backgroundColor: SLOT_BG,
     boxShadow: `inset ${BEVEL}px ${BEVEL}px 0 ${SLOT_DARK}, inset -${BEVEL}px -${BEVEL}px 0 ${SLOT_LIGHT}`,
@@ -168,6 +188,7 @@ export function SponsorsSection() {
                   <Slot
                     key={index}
                     size={tier.slotSize}
+                    width={tier.slotWidth}
                     sponsor={filled[index]}
                     delay={tierIndex * 0.08 + index * 0.03}
                   />
