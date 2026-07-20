@@ -4,7 +4,7 @@ import { motion, useMotionValueEvent, useScroll, useTransform } from "motion/rea
 import { useRef, useState } from "react";
 import grassTexture from "@/assets/grass.png";
 import dirtTexture from "@/assets/dirt.png";
-import logoImg from "@/assets/innohacks-logo.png";
+import logoImg from "@/assets/logo.png";
 import moonImg from "@/assets/moon.png";
 import sunImg from "@/assets/sun.png";
 import { CelestialBody } from "./celestial-body";
@@ -87,7 +87,6 @@ export function HomeHero() {
               alt="InnoHacks 4.0"
               className="w-[min(56vw,520px)] h-auto select-none"
               style={{
-                imageRendering: "pixelated",
                 filter: isDay
                   ? "drop-shadow(0 8px 0 rgba(0,0,0,0.25)) drop-shadow(0 0 30px rgba(255,235,160,0.35))"
                   : "drop-shadow(0 8px 0 rgba(0,0,0,0.45)) drop-shadow(0 0 40px rgba(160,180,255,0.45))",

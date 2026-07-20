@@ -12,7 +12,7 @@ const dataUri = (buf: Buffer) => `data:image/png;base64,${buf.toString("base64")
 
 export default async function OpengraphImage() {
   const [logo, grass, dirt, minecraft, minecraftBold] = await Promise.all([
-    asset("innohacks-logo.png"),
+    asset("logo.png"),
     asset("grass.png"),
     asset("dirt.png"),
     asset("fonts", "Minecraft.otf"),
@@ -47,7 +47,7 @@ export default async function OpengraphImage() {
         </div>
 
         {/* eslint-disable-next-line @next/next/no-img-element -- satori renders raw <img>; next/image is unavailable here. */}
-        <img src={dataUri(logo)} alt="" width={900} height={253} style={{ marginTop: 28 }} />
+        <img src={dataUri(logo)} alt="" width={900} height={237} style={{ marginTop: 28 }} />
 
         <div
           style={{

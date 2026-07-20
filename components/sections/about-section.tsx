@@ -6,12 +6,19 @@ import { BlockSection } from "./block-section";
 import { BookPage } from "./book-page";
 import { QuestBoard } from "./quest-board";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+const PIXEL_FONT =
+  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
 const INK = "#3a2a17";
 
 export function AboutSection() {
   return (
-    <BlockSection id="about" texture={dirtTexture} fallbackColor="#7c4a2d" seam={false} align="left">
+    <BlockSection
+      id="about"
+      texture={dirtTexture}
+      fallbackColor="#7c4a2d"
+      seam={false}
+      align="left"
+    >
       <div className="grid w-full gap-6 md:grid-cols-2 md:items-stretch md:gap-0">
         <motion.div
           initial={{ opacity: 0, x: -60 }}
@@ -27,10 +34,17 @@ export function AboutSection() {
             >
               About
             </h2>
-            <p className="text-lg md:text-xl" style={{ color: `${INK}d9`, fontFamily: PIXEL_FONT }}>
-              Placeholder copy — what InnoHacks 4.0 is, who it's for, and why you should show up. A weekend of
-              building, breaking, and shipping with a few hundred other people who'd rather make something than
-              talk about making something.
+            <p style={{ color: `${INK}d9`, fontFamily: PIXEL_FONT }}>
+              Innohacks 4.0 is Innogeeks’ flagship 24-hour national hackathon,
+              bringing together the brightest student innovators to solve
+              real-world challenges through technology. Hosted at KIET Deemed to
+              be University, the event offers mentorship from industry experts,
+              exciting problem statements, networking opportunities and a
+              platform to transform innovative ideas into impactful solutions.
+              With a legacy of successful editions, thousands of online
+              engagements and participants from diverse backgrounds, InnoHacks
+              4.0 continues to empower the next generation of creators,
+              developers and entrepreneurs.
             </p>
           </BookPage>
         </motion.div>

@@ -17,7 +17,7 @@ export function PictureFrame({ caption, delay = 0, children }: PictureFrameProps
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.5, ease: "easeOut", delay }}
-      className="flex flex-col gap-2"
+      className="group flex flex-col gap-2 cursor-pointer"
     >
       <div
         className="p-3"
@@ -36,7 +36,7 @@ export function PictureFrame({ caption, delay = 0, children }: PictureFrameProps
         }}
       >
         <div
-          className="flex aspect-[4/3] items-center justify-center"
+          className="flex aspect-[4/3] items-center justify-center overflow-hidden p-4 grayscale transition-[filter] duration-300 ease-out group-hover:grayscale-0"
           style={{
             backgroundColor: "#1c1c1c",
             boxShadow: "inset 0 4px 10px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(0,0,0,0.5)",
@@ -47,8 +47,8 @@ export function PictureFrame({ caption, delay = 0, children }: PictureFrameProps
       </div>
       {caption && (
         <span
-          className="text-center text-xs uppercase tracking-[0.15em] text-white/80 md:text-sm"
-          style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.6)" }}
+          className="text-center text-sm uppercase tracking-[0.15em] text-white md:text-base"
+          style={{ fontFamily: PIXEL_FONT, textShadow: "2px 2px 0 rgba(0,0,0,0.85)" }}
         >
           {caption}
         </span>

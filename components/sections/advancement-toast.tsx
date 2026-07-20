@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { StaticImageData } from "next/image";
 import toastsTexture from "@/assets/toasts.png";
 
@@ -29,19 +29,32 @@ type AdvancementToastProps = {
   name: string;
   icon: StaticImageData;
   iconAlt?: string;
+  /** Seconds to hold before sliding in, for staggering a row of toasts. */
+  delay?: number;
+  /** Cap on the rendered width, in px. */
+  maxWidth?: number;
 };
 
 /** Minecraft advancement toast, drawn from the real toasts.png sprite. Slides in like the in-game popup. */
-export function AdvancementToast({ title = "Advancement Made!", name, icon, iconAlt = "" }: AdvancementToastProps) {
+export function AdvancementToast({
+  title = "Advancement Made!",
+  name,
+  icon,
+  iconAlt = "",
+  delay = 0,
+  maxWidth = 420,
+}: AdvancementToastProps) {
+  const reduceMotion = useReducedMotion() ?? false;
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: 48 }}
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 48 }}
       whileInView={{ opacity: 1, x: 0 }}
       viewport={{ once: true, amount: 0.6 }}
-      transition={{ duration: 0.45, ease: "easeOut" }}
+      transition={{ duration: 0.45, ease: "easeOut", delay }}
       className="relative w-full select-none"
       style={{
-        maxWidth: 420,
+        maxWidth,
         aspectRatio: `${SPRITE_W} / ${SPRITE_H}`,
         backgroundImage: `url(${toastsTexture.src})`,
         // Scale the whole sheet so its 160px-wide sprite exactly fills this element.

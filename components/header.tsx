@@ -5,7 +5,7 @@ import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
 import { useEffect, useState, type MouseEvent } from "react";
 import dirtTexture from "@/assets/dirt.png";
 import grassTexture from "@/assets/grass.png";
-import logoImg from "@/assets/innohacks-logo.png";
+import logoMarkImg from "@/assets/logo-mark.png";
 
 const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
 const GRASS_TILE = 16;
@@ -92,11 +92,16 @@ export function Header() {
             onClick={(event) => handleNavClick(event, "#hero")}
             className="flex shrink-0 select-none items-center"
           >
+            {/* Just the H mark here — the full wordmark is right below in the hero. The mark is
+                dirt-and-stone on a dirt bar, so it needs the dark halo to hold its silhouette. */}
             <img
-              src={logoImg.src}
+              src={logoMarkImg.src}
               alt="InnoHacks 4.0"
-              className="h-7 w-auto md:h-8"
-              style={{ imageRendering: "pixelated" }}
+              className="h-9 w-auto md:h-10"
+              style={{
+                filter:
+                  "drop-shadow(0 1px 0 rgba(0,0,0,0.85)) drop-shadow(0 0 1px rgba(0,0,0,0.85)) drop-shadow(0 0 3px rgba(0,0,0,0.5))",
+              }}
             />
           </a>
           <nav className="hidden items-center gap-1.5 md:flex">
