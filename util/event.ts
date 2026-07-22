@@ -19,11 +19,11 @@ export const EVENT = {
     country: "IN",
   },
   url: "https://innohacks.live",
-  email: "innohacks@innogeeks.in",
+  email: "innogeeks@kiet.edu",
   socials: [
     "https://instagram.com/innogeeks",
     "https://linkedin.com/company/innogeeks",
     "https://x.com/innogeeks",
-    "https://discord.gg/innogeeks",
+    "https://discord.gg/YFcK3TnnM8",
   ],
 } as const;

@@ -20,7 +20,7 @@ const VENUE = [
 const VENUE_MAP_URL = "https://maps.app.goo.gl/e5pt4dcFpn7SivZr5";
 
 const CONTACTS = [
-  { label: "innohacks@innogeeks.in", href: "mailto:innogeeks@kiet.edu" },
+  { label: "innogeeks@kiet.edu", href: "mailto:innogeeks@kiet.edu" },
 ];
 
 const QUICK_LINKS = [
