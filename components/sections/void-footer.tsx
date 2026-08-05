@@ -30,7 +30,11 @@ const QUICK_LINKS = [
     newTab: true,
   },
   { label: "About Innogeeks", href: "https://innogeeks.in", newTab: true },
-  { label: "Code of Conduct", href: "/code-of-conduct.pdf", newTab: true },
+  {
+    label: "Code of Conduct",
+    href: "https://github.com/MLH/mlh-policies/blob/main/code-of-conduct.md?ajs_uid=019a545b-7066-854f-a508-3f7db2a23c38",
+    newTab: true,
+  },
   { label: "FAQs", href: "#faqs" },
 ];
 

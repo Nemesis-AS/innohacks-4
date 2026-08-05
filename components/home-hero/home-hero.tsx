@@ -68,6 +68,22 @@ export function HomeHero() {
 
   return (
     <>
+      {/* MLH-required trust badge — must stay pinned top-right and unmodified. Kept outside the
+          sticky scene wrapper so the hero's overflow clipping can never eat it. */}
+      <a
+        id="mlh-trust-badge"
+        href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white"
+        target="_blank"
+        rel="noreferrer"
+        style={{ display: "block", maxWidth: 100, minWidth: 60, position: "fixed", right: 50, top: 0, width: "10%", zIndex: 10000 }}
+      >
+        <img
+          src="https://logged-assets.s3.amazonaws.com/trust-badge/2027/mlh-trust-badge-2027-white.svg"
+          alt="Major League Hacking 2026 Hackathon Season"
+          style={{ width: "100%" }}
+        />
+      </a>
+
       {/* Scroll spacer — local scroll distance the day/night cycle plays out over */}
       <main id="hero" ref={heroRef} className="relative" style={{ height: "280vh" }}>
         <div className="sticky top-0 h-screen overflow-hidden">
