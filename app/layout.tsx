@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Caveat, Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { Header } from "@/components/header";
+import { MlhTrustBadge } from "@/components/mlh-trust-badge";
 import { EVENT } from "@/util/event";
 import "./globals.css";
 
@@ -99,6 +100,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Header />
+        <MlhTrustBadge />
         {children}
       </body>
     </html>

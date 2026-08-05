@@ -1,6 +1,6 @@
 const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
 const INK = "#3a2a17";
-const CONTACT_EMAIL = "team@innohacks.example"; // TODO: replace with real contact address
+const CONTACT_EMAIL = "innogeeks@kiet.edu";
 
 type Quest = {
   icon: string;

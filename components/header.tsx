@@ -1,17 +1,17 @@
 "use client";
 
 import { useLenis } from "lenis/react";
-import { AnimatePresence, motion, useScroll, useTransform } from "motion/react";
-import { useEffect, useState, type MouseEvent } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useState, type MouseEvent } from "react";
 import dirtTexture from "@/assets/dirt.png";
 import grassTexture from "@/assets/grass.png";
 import logoMarkImg from "@/assets/logo-mark.png";
+import { useHeaderFade } from "./use-header-fade";
 
 const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
 const GRASS_TILE = 16;
 const GRASS_CAP_HEIGHT = 10;
 const DIRT_TILE = 32;
-const FADE_DISTANCE = 240;
 
 const NAV_LINKS = [
   { label: "About", href: "#about" },
@@ -28,24 +28,9 @@ const NAV_LINKS = [
  * coming into view.
  */
 export function Header() {
-  const { scrollY } = useScroll();
   const lenis = useLenis();
-  const [fadeStart, setFadeStart] = useState(Number.POSITIVE_INFINITY);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const measure = () => {
-      const hero = document.getElementById("hero");
-      if (!hero) return;
-      setFadeStart(hero.offsetTop + hero.offsetHeight - window.innerHeight);
-    };
-    measure();
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
-  const opacity = useTransform(scrollY, [fadeStart, fadeStart + FADE_DISTANCE], [0, 1]);
-  const pointerEvents = useTransform(opacity, (value) => (value > 0.05 ? "auto" : "none"));
+  const { opacity, pointerEvents } = useHeaderFade();
 
   const handleNavClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
     setIsMenuOpen(false);
@@ -159,7 +144,9 @@ export function Header() {
                 boxShadow: "0 10px 28px rgba(0,0,0,0.4)",
               }}
             >
-              <nav className="flex flex-col px-4 py-2">
+              {/* Top padding clears the MLH badge, which hangs ~33px past the bar into the
+                  opened menu (60px wide on a 392x688 badge). */}
+              <nav className="flex flex-col px-4 pb-2 pt-10">
                 {NAV_LINKS.map((link) => (
                   <a
                     key={link.href}
