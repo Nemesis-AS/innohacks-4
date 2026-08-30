@@ -21,6 +21,8 @@ import HoverRobotixLogo from "@/assets/sponsors/hoverrobotix.png";
 import Lucr8Logo from "@/assets/sponsors/lucr8.jpeg";
 import MentorXLogo from "@/assets/sponsors/mentorx.png";
 import RevUpLogo from "@/assets/sponsors/revup.png";
+import NavanLogo from "@/assets/sponsors/navan.svg";
+import TbiLogo from "@/assets/sponsors/tbi.png";
 
 import { DUR_MICRO, DUR_REVEAL, EASE, POP_SPRING, VIEWPORT, VIEWPORT_TALL } from "@/util/motion";
 import { bevelWell, FOCUS_RING, PIXEL_FONT, SHADOW_SMALL, TIER_COLORS } from "@/util/ui";
@@ -58,7 +60,7 @@ const GLINT_STAGGER = 1.4;
  */
 const CTA_SIZE = "w-full max-w-[16rem] px-8 py-3 text-sm md:text-base";
 
-type TierId = "gold" | "hosting" | "silver" | "bronze";
+type TierId = "gold" | "hosting" | "title" | "silver" | "bronze";
 
 type Sponsor = {
   name: string;
@@ -87,9 +89,19 @@ type Tier = {
 
 /**
  * Ordered like a chest's rows. The hosting partner leads — the platform the whole
- * hackathon runs on — then the paid tiers, rarest loot first.
+ * hackathon runs on — then the title sponsor, then the paid tiers, rarest loot first.
  */
 const TIERS: Tier[] = [
+  {
+    id: "title",
+    label: "Title Sponsor",
+    pip: TIER_COLORS.emerald,
+    slotWidth: 300,
+    slotHeight: 140,
+    // A single named title sponsor, like the host above it.
+    perRow: 1,
+    slotCount: 1,
+  },
   {
     id: "hosting",
     label: "Hosting Partner",
@@ -131,6 +143,13 @@ const TIERS: Tier[] = [
 
 // Add sponsors here as they're confirmed. Unclaimed slots render as locked "???" slots.
 const SPONSORS: Sponsor[] = [
+  {
+    name: "KIET TBI",
+    tier: "title",
+    logo: TbiLogo,
+    logoBg: "#ffffff",
+    alt: "KIET TBI LOGO",
+  },
   {
     name: "Devfolio",
     tier: "hosting",
@@ -206,6 +225,13 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#006867",
     logo: RevUpLogo,
     alt: "REVUP LOGO",
+  },
+  {
+    name: "Navan AI",
+    tier: "bronze",
+    logoBg: "#ffffff",
+    logo: NavanLogo,
+    alt: "NAVAN AI LOGO",
   },
 ];
 

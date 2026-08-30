@@ -8,7 +8,7 @@ import { EVENT } from "@/util/event";
 import { AdvancementPlaque, type Partner } from "./advancement-plaque";
 import { BlockSection } from "./block-section";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { edgeFadeMask } from "@/util/ui";
 
 /**
  * Fortress interiors are lit by lava, not daylight. Exported so the neighbouring
@@ -71,8 +71,7 @@ export function CommunityPartnersSection() {
   const duration = PARTNERS.length * SECONDS_PER_PLAQUE;
 
   // Fades the plaques into the brickwork instead of letting overflow-hidden slice them.
-  const edgeFade =
-    "linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%)";
+  const edgeFade = edgeFadeMask(6);
 
   return (
     <BlockSection

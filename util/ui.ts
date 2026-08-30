@@ -47,7 +47,17 @@ export const FOCUS_RING =
 /** Sponsor/prize tier accents — the rarity colors. */
 export const TIER_COLORS = {
   diamond: "#5ff2f2",
+  emerald: "#41c65b",
   gold: "#fcdc5f",
   silver: "#dcdcdc",
   bronze: "#c87137",
 } as const;
+
+/**
+ * Horizontal mask that dissolves a strip's ends into whatever sits behind it,
+ * rather than letting its box (or an `overflow-hidden` parent) slice them off.
+ * `fade` is how much of the width each end spends fading, in percent.
+ */
+export function edgeFadeMask(fade: number) {
+  return `linear-gradient(90deg, transparent 0, #000 ${fade}%, #000 ${100 - fade}%, transparent 100%)`;
+}

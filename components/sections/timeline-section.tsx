@@ -9,14 +9,11 @@ import deepslateTexture from "@/assets/deepslate.png";
 import diamondDeepslateTexture from "@/assets/diamond_deepslate.png";
 import ironDeepslateTexture from "@/assets/iron_deepslate.png";
 import minecartImg from "@/assets/minecart.png";
-import oakLogTexture from "@/assets/oak_log.png";
 import railStrip from "@/assets/rail_strip.png";
 import { BlockSection } from "./block-section";
 
 import { DUR_MICRO, VIEWPORT } from "@/util/motion";
-import { PIXEL_FONT, SHADOW_SMALL } from "@/util/ui";
-/** The oak peg each row's rail is pinned to the chain by. */
-const PEG_SIZE = 16;
+import { edgeFadeMask, PIXEL_FONT, SHADOW_SMALL } from "@/util/ui";
 
 /**
  * Chain, at 2 screen pixels per texel — the scale the block textures around it
@@ -65,10 +62,10 @@ const CART_HEIGHT = Math.round(
 );
 /**
  * Gap between the banner's leading edge and the cart's tail, bridged by the
- * coupling bar. Wide enough that the parked cart clears the peg on the post
- * rather than sitting on top of it: the banner's inner edge is half a `gap-10`
- * (20px) short of the post, so at 32px the cart's tail lands ~12px past the
- * post's centre and its nose ~88px past.
+ * coupling bar. Wide enough that the parked cart clears the chain rather than
+ * straddling it: the banner's inner edge is half a `gap-10` (20px) short of the
+ * chain, so at 32px the cart's tail lands ~12px past the chain's centre line and
+ * its nose ~88px past.
  */
 const CART_LEAD = 32;
 /**
@@ -98,6 +95,16 @@ const RAIL_HEIGHT = Math.round((railStrip.height * RAIL_TILE) / railStrip.width)
  * sit the sleepers and the far rail, below it only the sleepers' near ends.
  */
 const RAIL_SURFACE = Math.round((30 / railStrip.height) * RAIL_HEIGHT);
+/**
+ * How much of the row each rail end spends fading out, in percent of the row's
+ * width. The track runs the full width of the row and has to stop somewhere; cut
+ * square it reads as a sawn-off prop, so instead it dissolves into the deepslate
+ * as if the tunnel carried on past the section. At `max-w-4xl` this is ~105px a
+ * side — a little over three 32px sleepers, enough that the tiling visibly thins
+ * out rather than blinking away mid-sleeper.
+ */
+const RAIL_FADE = 12;
+const RAIL_MASK = edgeFadeMask(RAIL_FADE);
 
 /** How far a banner hauls in from, as a share of its own width, on desktop. */
 const HAUL = "115%";
@@ -229,6 +236,8 @@ function Rail({ reduceMotion }: { reduceMotion: boolean }) {
         backgroundImage: `url(${railStrip.src})`,
         backgroundSize: `${RAIL_TILE}px ${RAIL_HEIGHT}px`,
         backgroundRepeat: "repeat-x",
+        maskImage: RAIL_MASK,
+        WebkitMaskImage: RAIL_MASK,
       }}
     />
   );
@@ -364,17 +373,6 @@ export function TimelineSection() {
             >
               {isDesktop && <Rail reduceMotion={reduceMotion} />}
 
-              <div
-                className="absolute top-1/2 left-6 -translate-x-1/2 -translate-y-1/2 md:left-1/2"
-                style={{
-                  width: PEG_SIZE,
-                  height: PEG_SIZE,
-                  backgroundImage: `url(${oakLogTexture.src})`,
-                  backgroundSize: "100% 100%",
-                  imageRendering: "pixelated",
-                  border: "2px solid #3a2615",
-                }}
-              />
               <motion.div
                 initial={
                   reduceMotion
