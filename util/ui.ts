@@ -40,9 +40,18 @@ export const SHADOW_SMALL = "1px 1px 0 rgba(0,0,0,0.6)";
 /** Light emboss for dark ink on light surfaces (parchment, endstone, sanded oak). */
 export const EMBOSS_LIGHT = "1px 1px 0 rgba(255,255,255,0.25)";
 
+/** Ink written on parchment — the book overlay's body color. */
+export const INK = "#3a2a17";
+/** Faded ink for dates, labels, and other secondary parchment text. */
+export const INK_SOFT = "#5b4426";
+
 /** Visible keyboard focus ring, shared by every interactive element. */
 export const FOCUS_RING =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70";
+
+/** The same ring in ink, for controls sitting on parchment where white would vanish. */
+export const FOCUS_RING_INK =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3a2a17]";
 
 /** Sponsor/prize tier accents — the rarity colors. */
 export const TIER_COLORS = {
@@ -60,4 +69,14 @@ export const TIER_COLORS = {
  */
 export function edgeFadeMask(fade: number) {
   return `linear-gradient(90deg, transparent 0, #000 ${fade}%, #000 ${100 - fade}%, transparent 100%)`;
+}
+
+/**
+ * Vertical mask that dissolves a scroll box's bottom edge into whatever sits
+ * behind it — a fade that reveals the surface below rather than painting a
+ * gradient over it, which no flat color could match on a textured background.
+ * Pair with bottom padding so the fade lands on empty space, not on content.
+ */
+export function bottomFadeMask(rem: number) {
+  return `linear-gradient(to bottom, #000 calc(100% - ${rem}rem), transparent 100%)`;
 }
