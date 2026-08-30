@@ -85,7 +85,7 @@ const PAST_EVENTS: PastEvent[] = [
     alt: "IWOC Logo",
     date: "Winter 2024",
     blurb:
-      "Innogeeks Winter of Code — a season-long open-source program mentoring students through real contributions.",
+      "IWOC 3.0 (Innogeeks Winter of Code) was a community-driven open-source program focused on encouraging students to learn, contribute, and collaborate on real-world projects. Participants worked with mentors, explored open-source technologies, and made meaningful contributions while gaining practical development experience. The program provided a great platform for students to connect with the developer community, improve their skills, and get started with open-source development.",
     stats: [
       { label: "Contributors", value: "300+" },
       { label: "Projects", value: "25" },

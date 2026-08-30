@@ -2,15 +2,22 @@ import { ReactLenis } from "lenis/react";
 import deepslateTexture from "@/assets/deepslate.png";
 import dirtTexture from "@/assets/dirt.png";
 import endstoneTexture from "@/assets/endstone.png";
+import netherBricksTexture from "@/assets/nether_bricks.png";
 import netherrackTexture from "@/assets/netherrack.png";
+import sculkTexture from "@/assets/sculk_still.png";
 import stoneTexture from "@/assets/stone.png";
 import bedrockTexture from "@/assets/bedrock.png";
 import { HomeHero } from "@/components/home-hero";
 import { AboutSection } from "@/components/sections/about-section";
 import { BlockTransition } from "@/components/sections/block-transition";
+import {
+  CommunityPartnersSection,
+  NETHER_BRICK_DARKEN,
+} from "@/components/sections/community-partners-section";
 import { FaqSection } from "@/components/sections/faq-section";
 import { FloatingIslandBase } from "@/components/sections/floating-island-base";
 import { PreviousEventsSection } from "@/components/sections/previous-events-section";
+import { PrizesSection } from "@/components/sections/prizes-section";
 import { SponsorsSection } from "@/components/sections/sponsors-section";
 import { DEEPSLATE_DARKEN, TimelineSection } from "@/components/sections/timeline-section";
 import { TracksSection } from "@/components/sections/tracks-section";
@@ -71,16 +78,30 @@ export default function Home() {
       />
       <TimelineSection />
       <BlockTransition
-        id="timeline-sponsors"
+        id="timeline-prizes"
         top={deepslateTexture}
-        bottom={bedrockTexture}
+        bottom={sculkTexture}
         topDarken={DEEPSLATE_DARKEN}
       />
+      <PrizesSection />
+      <BlockTransition id="prizes-sponsors" top={sculkTexture} bottom={bedrockTexture} />
       <SponsorsSection />
       <BlockTransition id="sponsors-previous-events" top={bedrockTexture} bottom={netherrackTexture} />
       <PreviousEventsSection />
-      <BlockTransition id="bedrock-endstone-transition" top={netherrackTexture} bottom={bedrockTexture} />
-      <BlockTransition id="bedrock-endstone-transition" top={bedrockTexture} bottom={endstoneTexture} />
+      <BlockTransition
+        id="previous-events-partners"
+        top={netherrackTexture}
+        bottom={netherBricksTexture}
+        bottomDarken={NETHER_BRICK_DARKEN}
+      />
+      <CommunityPartnersSection />
+      <BlockTransition
+        id="partners-bedrock"
+        top={netherBricksTexture}
+        bottom={bedrockTexture}
+        topDarken={NETHER_BRICK_DARKEN}
+      />
+      <BlockTransition id="bedrock-endstone" top={bedrockTexture} bottom={endstoneTexture} />
       {/* <BlockTransition id="bedrock-endstone-transitions" top={netherrackTexture} bottom={endstoneTexture} /> */}
       {/* <BlockTransition id="previous-events-faq" top={netherrackTexture} bottom={endstoneTexture} /> */}
       <FaqSection />

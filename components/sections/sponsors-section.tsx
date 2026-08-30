@@ -45,31 +45,54 @@ type Tier = {
   label: string;
   /** Item-swatch color. Sits on the light panel, so the label text stays dark for contrast. */
   pip: string;
-  slotSize: number;
-  /** Defaults to slotSize. Widened where the tier holds a wordmark rather than a square mark. */
-  slotWidth?: number;
+  /** Slots are landscape rectangles — most sponsor marks are wordmarks, not square icons. */
+  slotWidth: number;
+  slotHeight: number;
+  /** Slots per row. Extra sponsors wrap onto further rows of the same size. */
+  perRow: number;
+  /** Minimum slots to draw. Grows to fit however many sponsors the tier holds. */
   slotCount: number;
 };
 
 /** Ordered like a chest's rows — rarest loot at the top. Hosting partner sits directly below gold. */
 const TIERS: Tier[] = [
-  { id: "gold", label: "Gold", pip: "#fcdc5f", slotSize: 128, slotCount: 4 },
+  {
+    id: "gold",
+    label: "Gold",
+    pip: "#fcdc5f",
+    slotWidth: 300,
+    slotHeight: 140,
+    perRow: 3,
+    slotCount: 3,
+  },
   {
     id: "hosting",
     label: "Hosting Partner",
     pip: "#5ff2f2",
-    slotSize: 128,
-    slotWidth: 320,
+    slotWidth: 300,
+    slotHeight: 140,
+    // There's only ever one host, so no empty slots to fill out a row.
+    perRow: 1,
     slotCount: 1,
   },
   {
     id: "silver",
     label: "Silver",
     pip: "#dcdcdc",
-    slotSize: 104,
-    slotCount: 6,
+    slotWidth: 232,
+    slotHeight: 112,
+    perRow: 4,
+    slotCount: 4,
   },
-  { id: "bronze", label: "Technical Partner", pip: "#c87137", slotSize: 84, slotCount: 8 },
+  {
+    id: "bronze",
+    label: "Technical Partner",
+    pip: "#c87137",
+    slotWidth: 232,
+    slotHeight: 112,
+    perRow: 4,
+    slotCount: 4,
+  },
 ];
 
 // Add sponsors here as they're confirmed. Unclaimed slots render empty.
@@ -126,13 +149,13 @@ const SPONSORS: Sponsor[] = [
 
 /** One inventory slot: dark bevel top-left, light bevel bottom-right, like the vanilla GUI. */
 function Slot({
-  size,
   width,
+  height,
   sponsor,
   delay,
 }: {
-  size: number;
-  width?: number;
+  width: number;
+  height: number;
   sponsor?: Sponsor;
   delay: number;
 }) {
@@ -141,7 +164,7 @@ function Slot({
       {sponsor?.logo && (
         // Real logos aren't pixel art, so these render smoothly rather than pixelated.
         <span
-          className="flex h-full w-full items-center justify-center px-3 py-2"
+          className="flex h-full w-full items-center justify-center px-4 py-3"
           style={
             sponsor.logoBg ? { backgroundColor: sponsor.logoBg } : undefined
           }
@@ -162,10 +185,11 @@ function Slot({
     </>
   );
 
+  // Aspect ratio rather than a fixed height, so a slot keeps its shape when it
+  // has to shrink to fit a narrow screen.
   const style = {
-    width: width ?? size,
-    height: size,
-    maxWidth: "100%",
+    width: "100%",
+    aspectRatio: `${width} / ${height}`,
     padding: BEVEL * 2,
     backgroundColor: SLOT_BG,
     boxShadow: `inset ${BEVEL}px ${BEVEL}px 0 ${SLOT_DARK}, inset -${BEVEL}px -${BEVEL}px 0 ${SLOT_LIGHT}`,
@@ -177,6 +201,7 @@ function Slot({
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.3, ease: "easeOut", delay }}
+      style={{ width, maxWidth: "100%" }}
     >
       {sponsor?.href ? (
         <a
@@ -229,8 +254,10 @@ export function SponsorsSection() {
       >
         {TIERS.map((tier, tierIndex) => {
           const filled = SPONSORS.filter((sponsor) => sponsor.tier === tier.id);
+          // Pad out to whole rows so the tier always reads as complete chest rows.
+          const wanted = Math.max(tier.slotCount, filled.length);
           const slots = Array.from({
-            length: Math.max(tier.slotCount, filled.length),
+            length: Math.ceil(wanted / tier.perRow) * tier.perRow,
           });
 
           return (
@@ -267,12 +294,15 @@ export function SponsorsSection() {
                   }}
                 />
               </div>
-              <div className="flex flex-wrap justify-center gap-0">
+              <div
+                className="mx-auto flex flex-wrap justify-center gap-0"
+                style={{ maxWidth: tier.perRow * tier.slotWidth }}
+              >
                 {slots.map((_, index) => (
                   <Slot
                     key={index}
-                    size={tier.slotSize}
                     width={tier.slotWidth}
+                    height={tier.slotHeight}
                     sponsor={filled[index]}
                     delay={tierIndex * 0.08 + index * 0.03}
                   />

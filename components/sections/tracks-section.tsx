@@ -31,7 +31,7 @@ const HEADING_SHADOW = "1px 1px 0 rgba(255,255,255,0.22)";
  */
 const SANDED_OAK = "rgba(233,207,157,0.65)";
 
-type Track = {
+export type Track = {
   icon: StaticImageData;
   iconAlt: string;
   name: string;
@@ -39,7 +39,8 @@ type Track = {
   description: string;
 };
 
-const TRACKS: Track[] = [
+/** Exported so the prize board can hang a track prize off each one by name and colour. */
+export const TRACKS: Track[] = [
   {
     icon: copperStoneTexture,
     iconAlt: "Copper ore",

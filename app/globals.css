@@ -67,3 +67,21 @@ html.is-pressing [role="button"],
 html.is-pressing .cursor-pointer {
   cursor: url("/cursors/hand-press.png") 3 0, pointer;
 }
+
+/*
+ * Marquee for the community-partner plaques. This is the only @keyframes in the
+ * codebase — everything else animates through Motion — because an infinite linear
+ * scroll is the one case where CSS wins outright: it runs off the main thread,
+ * never re-renders React, and doesn't compete with Lenis for the scroll position.
+ *
+ * The track holds two identical copies of the plaque list, so translating by half
+ * its width lands exactly on the seam and the loop is invisible.
+ */
+@keyframes plaque-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
