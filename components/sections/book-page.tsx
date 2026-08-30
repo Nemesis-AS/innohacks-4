@@ -22,7 +22,11 @@ export function BookPage({ flip = false, className = "", children }: BookPagePro
           transform: flip ? "scaleX(-1)" : undefined,
         }}
       />
-      <div className="relative z-10 flex h-full flex-col gap-3 px-10 py-12 md:px-14 md:py-16">{children}</div>
+      {/* The parchment asset's painted border eats a lot of a phone's width, so the
+          inset steps up with the breakpoint rather than starting at desktop size. */}
+      <div className="relative z-10 flex h-full flex-col gap-3 px-7 py-9 sm:px-10 sm:py-12 md:px-14 md:py-16">
+        {children}
+      </div>
     </div>
   );
 }

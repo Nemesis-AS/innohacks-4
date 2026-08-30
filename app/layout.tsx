@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Caveat, Geist, Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
+import { AllayCompanion } from "@/components/allay-companion";
 import { Header } from "@/components/header";
 import { MlhTrustBadge } from "@/components/mlh-trust-badge";
+import { PixelCursorPress } from "@/components/pixel-cursor-press";
 import { EVENT } from "@/util/event";
 import "./globals.css";
 
@@ -101,6 +103,8 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Header />
         <MlhTrustBadge />
+        <PixelCursorPress />
+        <AllayCompanion />
         {children}
       </body>
     </html>

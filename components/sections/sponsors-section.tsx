@@ -6,7 +6,14 @@ import bedrockTexture from "@/assets/bedrock.png";
 import devfolioLogo from "@/assets/devfolio.png";
 import { BlockSection } from "./block-section";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import CodeCraftersLogo from "@/assets/sponsors/codecrafters.svg";
+import TinComputerLogo from "@/assets/sponsors/tin_computers.svg";
+import N8nLogo from "@/assets/sponsors/n8n.svg";
+import HackermateLogo from "@/assets/sponsors/hackermate.svg";
+import XyzLogo from "@/assets/sponsors/xyz.svg";
+
+const PIXEL_FONT =
+  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
 
 // Vanilla container-GUI palette, sampled from assets/container/generic_54.png.
 const PANEL_BG = "#c6c6c6";
@@ -47,9 +54,22 @@ type Tier = {
 /** Ordered like a chest's rows — rarest loot at the top. Hosting partner sits directly below gold. */
 const TIERS: Tier[] = [
   { id: "gold", label: "Gold", pip: "#fcdc5f", slotSize: 128, slotCount: 4 },
-  { id: "hosting", label: "Hosting Partner", pip: "#5ff2f2", slotSize: 128, slotWidth: 320, slotCount: 1 },
-  { id: "silver", label: "Silver", pip: "#dcdcdc", slotSize: 104, slotCount: 6 },
-  { id: "bronze", label: "Bronze", pip: "#c87137", slotSize: 84, slotCount: 8 },
+  {
+    id: "hosting",
+    label: "Hosting Partner",
+    pip: "#5ff2f2",
+    slotSize: 128,
+    slotWidth: 320,
+    slotCount: 1,
+  },
+  {
+    id: "silver",
+    label: "Silver",
+    pip: "#dcdcdc",
+    slotSize: 104,
+    slotCount: 6,
+  },
+  { id: "bronze", label: "Technical Partner", pip: "#c87137", slotSize: 84, slotCount: 8 },
 ];
 
 // Add sponsors here as they're confirmed. Unclaimed slots render empty.
@@ -61,6 +81,46 @@ const SPONSORS: Sponsor[] = [
     href: "https://devfolio.co",
     logoBg: "#ffffff",
     alt: "DEVFOLIO LOGO",
+  },
+  {
+    name: "Code Crafters",
+    tier: "bronze",
+    logo: CodeCraftersLogo,
+    href: "https://codecrafters.io",
+    logoBg: "#ffffff",
+    alt: "CODECRAFTERS LOGO",
+  },
+  {
+    name: "Tin Computer",
+    tier: "gold",
+    logo: TinComputerLogo,
+    href: "https://tin.computer",
+    logoBg: "#ffffff",
+    alt: "TIN COMPUTER LOGO",
+  },
+  {
+    name: "N8N",
+    tier: "bronze",
+    logo: N8nLogo,
+    href: "https://n8n.io",
+    logoBg: "#ffffff",
+    alt: "N8N LOGO",
+  },
+  {
+    name: "Hackermate",
+    tier: "bronze",
+    logo: HackermateLogo,
+    href: "https://hackermate.in",
+    logoBg: "#000000",
+    alt: "HACKERMATE LOGO",
+  },
+  {
+    name: ".xyz",
+    tier: "bronze",
+    logo: XyzLogo,
+    href: "https://gen.xyz/",
+    logoBg: "#ffffff",
+    alt: ".XYZ LOGO",
   },
 ];
 
@@ -82,9 +142,15 @@ function Slot({
         // Real logos aren't pixel art, so these render smoothly rather than pixelated.
         <span
           className="flex h-full w-full items-center justify-center px-3 py-2"
-          style={sponsor.logoBg ? { backgroundColor: sponsor.logoBg } : undefined}
+          style={
+            sponsor.logoBg ? { backgroundColor: sponsor.logoBg } : undefined
+          }
         >
-          <img src={sponsor.logo.src} alt={sponsor.alt ?? sponsor.name} className="max-h-full max-w-full object-contain" />
+          <img
+            src={sponsor.logo.src}
+            alt={sponsor.alt ?? sponsor.name}
+            className="max-h-full max-w-full object-contain"
+          />
         </span>
       )}
       {sponsor?.href && (
@@ -146,7 +212,10 @@ export function SponsorsSection() {
       seam={false}
       maxWidthClassName="max-w-5xl"
     >
-      <p className="mb-2 text-xs text-white/70 md:text-sm" style={{ fontFamily: PIXEL_FONT }}>
+      <p
+        className="mb-2 text-xs text-white/70 md:text-sm"
+        style={{ fontFamily: PIXEL_FONT }}
+      >
         The bedrock InnoHacks is built on.
       </p>
 
@@ -160,7 +229,9 @@ export function SponsorsSection() {
       >
         {TIERS.map((tier, tierIndex) => {
           const filled = SPONSORS.filter((sponsor) => sponsor.tier === tier.id);
-          const slots = Array.from({ length: Math.max(tier.slotCount, filled.length) });
+          const slots = Array.from({
+            length: Math.max(tier.slotCount, filled.length),
+          });
 
           return (
             <div key={tier.id} className={tierIndex === 0 ? "" : "mt-7"}>
@@ -177,7 +248,11 @@ export function SponsorsSection() {
                 />
                 <span
                   className="text-base uppercase tracking-[0.2em] md:text-xl"
-                  style={{ color: PANEL_TEXT, fontFamily: PIXEL_FONT, fontWeight: 700 }}
+                  style={{
+                    color: PANEL_TEXT,
+                    fontFamily: PIXEL_FONT,
+                    fontWeight: 700,
+                  }}
                 >
                   {tier.label}
                 </span>

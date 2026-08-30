@@ -1,7 +1,7 @@
 "use client";
 
 import { DevfolioButton } from "./devfolio-button";
-import { PixelBadge } from "./minecraft-ui";
+import { PixelBadge } from "@/components/minecraft-ui";
 
 const EVENT_DATES = "Oct 3–4, 2026";
 

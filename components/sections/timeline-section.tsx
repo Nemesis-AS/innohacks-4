@@ -85,6 +85,13 @@ const EVENTS: TimelineEvent[] = [
   },
 ];
 
+/**
+ * Dark wash over the deepslate section, so it reads as deeper underground than the stone
+ * above it. Shared with the BlockTransition strips on either side (see app/page.tsx) so
+ * their deepslate blocks stay in step — tune here and both boundaries follow.
+ */
+export const DEEPSLATE_DARKEN = 0.45;
+
 export function TimelineSection() {
   return (
     <BlockSection
@@ -98,6 +105,7 @@ export function TimelineSection() {
         ironDeepslateTexture,
         diamondDeepslateTexture,
       ]}
+      darken={DEEPSLATE_DARKEN}
       seam={false}
       maxWidthClassName="max-w-4xl"
     >

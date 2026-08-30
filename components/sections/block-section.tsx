@@ -1,5 +1,6 @@
 import type { StaticImageData } from "next/image";
 import type { ReactNode } from "react";
+import { wash } from "@/util/texture";
 import { BlockBackground } from "./block-background";
 import { BlockSeam, seedFromId } from "./block-seam";
 import { OreOverlay } from "./ore-overlay";
@@ -15,6 +16,8 @@ type BlockSectionProps = {
   tileSize?: number;
   textColor?: string;
   oreTextures?: StaticImageData[];
+  /** Strength (0-1) of a dark wash over the background, for sections meant to read as deeper underground. */
+  darken?: number;
   /** Disable the 1-block jagged seam, e.g. when a dedicated BlockTransition already handles this boundary. */
   seam?: boolean;
   /** "center" stacks eyebrow/title/children in a narrow centered column (default). "left" widens the column and left-aligns content, for layouts that build their own internal grid. */
@@ -34,6 +37,7 @@ export function BlockSection({
   tileSize,
   textColor = "#f5f5f0",
   oreTextures,
+  darken = 0,
   seam = true,
   align = "center",
   maxWidthClassName,
@@ -47,7 +51,12 @@ export function BlockSection({
       {oreTextures && oreTextures.length > 0 && (
         <OreOverlay textures={oreTextures} seed={seedFromId(id)} tileSize={tileSize} />
       )}
-      {seam && <BlockSeam seed={seedFromId(id)} color={fallbackColor} textureSrc={texture?.src} />}
+      {darken > 0 && (
+        // Above the ore veins so texture and ore darken together — tinting only the
+        // background would leave the ore tiles at full brightness, floating on top.
+        <div className="absolute inset-0 -z-[4]" style={{ backgroundColor: wash(darken) }} aria-hidden />
+      )}
+      {seam && <BlockSeam seed={seedFromId(id)} color={fallbackColor} textureSrc={texture?.src} darken={darken} />}
       <div
         className={`relative z-10 flex w-full flex-col gap-4 ${
           maxWidthClassName ?? (isLeft ? "max-w-5xl" : "max-w-2xl")

@@ -1,3 +1,5 @@
+import { MinecraftButton } from "@/components/minecraft-ui";
+
 const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
 const INK = "#3a2a17";
 const CONTACT_EMAIL = "innogeeks@kiet.edu";
@@ -8,8 +10,13 @@ type Quest = {
   reward: string;
   /** Minecraft item-rarity colors: uncommon (yellow), rare (aqua), epic (purple). */
   rarityColor: string;
+  /** Dark shade of rarityColor, for the button's bevel frame. */
+  borderColor: string;
   subject: string;
 };
+
+/** Seconds between each button's glint, so the three sweep in sequence rather than in lockstep. */
+const GLINT_STAGGER = 1.4;
 
 const QUESTS: Quest[] = [
   {
@@ -17,6 +24,7 @@ const QUESTS: Quest[] = [
     role: "Sponsor",
     reward: "Reward: brand exposure to 300+ builders",
     rarityColor: "#fbbf24",
+    borderColor: "#7a4f05",
     subject: "Sponsor Inquiry — InnoHacks 4.0",
   },
   {
@@ -24,6 +32,7 @@ const QUESTS: Quest[] = [
     role: "Judge",
     reward: "Reward: front-row seat to the best ideas",
     rarityColor: "#22d3ee",
+    borderColor: "#0b5f6e",
     subject: "Judge Inquiry — InnoHacks 4.0",
   },
   {
@@ -31,6 +40,7 @@ const QUESTS: Quest[] = [
     role: "Partner",
     reward: "Reward: co-branded reach & community access",
     rarityColor: "#c084fc",
+    borderColor: "#5b2d80",
     subject: "Partner Inquiry — InnoHacks 4.0",
   },
 ];
@@ -48,7 +58,7 @@ export function QuestBoard() {
       {QUESTS.map((quest, index) => (
         <div
           key={quest.role}
-          className={`flex flex-col gap-1.5 pb-3 ${index < QUESTS.length - 1 ? "border-b border-dashed" : ""}`}
+          className={`flex flex-col gap-2 pb-4 ${index < QUESTS.length - 1 ? "border-b border-dashed" : ""}`}
           style={{ borderColor: `${INK}40` }}
         >
           <span className="text-lg md:text-xl" style={{ fontFamily: PIXEL_FONT, color: INK, fontWeight: 600 }}>
@@ -57,13 +67,21 @@ export function QuestBoard() {
           <span className="text-base md:text-lg" style={{ fontFamily: PIXEL_FONT, color: `${INK}cc` }}>
             {quest.reward}
           </span>
-          <a
+          {/* Three links all reading "Accept Quest" are useless when tabbing or listing
+              links, so the role rides along in the aria-label while the visible text
+              stays on-theme. */}
+          <MinecraftButton
             href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(quest.subject)}`}
-            className="self-start px-3 py-1 text-xs uppercase text-black transition-transform hover:-translate-y-0.5 md:text-sm"
-            style={{ fontFamily: PIXEL_FONT, backgroundColor: quest.rarityColor }}
+            color={quest.rarityColor}
+            borderColor={quest.borderColor}
+            textColor="#1a1206"
+            glint
+            glintDelay={index * GLINT_STAGGER}
+            aria-label={`Accept quest: become a ${quest.role.toLowerCase()}`}
+            className="mt-1 w-full px-5 py-3 text-sm md:text-base"
           >
-            Accept Quest
-          </a>
+            Accept Quest <span aria-hidden>→</span>
+          </MinecraftButton>
         </div>
       ))}
     </div>

@@ -3,6 +3,7 @@
 import type { StaticImageData } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { BLOCK_SIZE } from "@/util/constants";
+import { tiledTexture } from "@/util/texture";
 import { mulberry32, seedFromId } from "./block-seam";
 
 const ROWS = 3;
@@ -12,6 +13,10 @@ type BlockTransitionProps = {
   id: string;
   top: StaticImageData;
   bottom: StaticImageData;
+  /** Dark wash (0-1) for the top half's blocks — match the neighbouring section's `darken` so the strip doesn't read as a bright band. */
+  topDarken?: number;
+  /** Dark wash (0-1) for the bottom half's blocks. */
+  bottomDarken?: number;
 };
 
 function buildColumns(id: string, count: number) {
@@ -37,9 +42,11 @@ function buildColumns(id: string, count: number) {
  * Column count is derived from the measured width (width / BLOCK_SIZE) rather than a
  * fixed number, so every tile stays a true 32x32 square at any viewport size.
  */
-export function BlockTransition({ id, top, bottom }: BlockTransitionProps) {
+export function BlockTransition({ id, top, bottom, topDarken = 0, bottomDarken = 0 }: BlockTransitionProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [columns, setColumns] = useState<boolean[][]>([]);
+  const topTile = tiledTexture(top.src, BLOCK_SIZE, topDarken);
+  const bottomTile = tiledTexture(bottom.src, BLOCK_SIZE, bottomDarken);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -66,21 +73,12 @@ export function BlockTransition({ id, top, bottom }: BlockTransitionProps) {
     >
       {columns.map((rows, col) => (
         <div key={col} style={{ width: BLOCK_SIZE, flexShrink: 0 }}>
-          {rows.map((useTop, row) => {
-            const texture = useTop ? top : bottom;
-            return (
-              <div
-                key={row}
-                style={{
-                  width: BLOCK_SIZE,
-                  height: BLOCK_SIZE,
-                  backgroundImage: `url(${texture.src})`,
-                  backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
-                  imageRendering: "pixelated",
-                }}
-              />
-            );
-          })}
+          {rows.map((useTop, row) => (
+            <div
+              key={row}
+              style={{ width: BLOCK_SIZE, height: BLOCK_SIZE, ...(useTop ? topTile : bottomTile) }}
+            />
+          ))}
         </div>
       ))}
     </div>

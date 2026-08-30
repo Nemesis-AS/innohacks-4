@@ -24,3 +24,46 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/*
+ * Pixel cursors. The art lives in assets/cursor/; run scripts/generate-cursors.mjs
+ * to regenerate the PNGs in public/cursors/ after changing it.
+ *
+ * The PNGs are pre-scaled 2x on purpose: `image-rendering: pixelated` has no
+ * effect on cursor bitmaps, so the hard edges have to be baked into the file.
+ * Every rule keeps a native keyword after the url() so the declaration stays
+ * valid — and the pointer stays sane — if an image ever fails to load.
+ */
+body {
+  cursor: url("/cursors/arrow.png") 0 0, default;
+}
+
+/* The hotspot is the index fingertip, which the tilt puts near the top-left
+   corner — not the middle of the shape. */
+a,
+button,
+summary,
+label,
+[role="button"],
+.cursor-pointer {
+  cursor: url("/cursors/hand.png") 3 0, pointer;
+}
+
+/*
+ * Pressed variants — `is-pressing` is toggled on <html> by PixelCursorPress.
+ * Order matters here: `html.is-pressing *` and `html.is-pressing a` have equal
+ * specificity (0,1,1), so the per-element rules only win by coming last.
+ */
+html.is-pressing,
+html.is-pressing * {
+  cursor: url("/cursors/arrow-press.png") 0 0, default;
+}
+
+html.is-pressing a,
+html.is-pressing button,
+html.is-pressing summary,
+html.is-pressing label,
+html.is-pressing [role="button"],
+html.is-pressing .cursor-pointer {
+  cursor: url("/cursors/hand-press.png") 3 0, pointer;
+}

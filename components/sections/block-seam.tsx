@@ -1,3 +1,6 @@
+import type { CSSProperties } from "react";
+import { tiledTexture, wash } from "@/util/texture";
+
 export function mulberry32(seed: number) {
   return function random() {
     let t = (seed += 0x6d2b79f5);
@@ -22,6 +25,8 @@ type BlockSeamProps = {
   seed: number;
   color: string;
   textureSrc?: string;
+  /** Match the parent section's dark wash — the seam sits above the section's scrim, so it needs its own. */
+  darken?: number;
 };
 
 /**
@@ -30,9 +35,15 @@ type BlockSeamProps = {
  * stick up unevenly. Place at the top of a section, overlapping upward by
  * one block height.
  */
-export function BlockSeam({ seed, color, textureSrc }: BlockSeamProps) {
+export function BlockSeam({ seed, color, textureSrc, darken = 0 }: BlockSeamProps) {
   const random = mulberry32(seed);
   const pokes = Array.from({ length: COLUMNS }, () => random() < POKE_CHANCE);
+  const tile: CSSProperties = textureSrc
+    ? { ...tiledTexture(textureSrc, BLOCK_SIZE, darken), backgroundPosition: darken > 0 ? "top, bottom" : "bottom" }
+    : {
+        backgroundColor: color,
+        backgroundImage: darken > 0 ? `linear-gradient(${wash(darken)}, ${wash(darken)})` : undefined,
+      };
 
   return (
     <div
@@ -40,18 +51,7 @@ export function BlockSeam({ seed, color, textureSrc }: BlockSeamProps) {
       style={{ top: -BLOCK_SIZE, height: BLOCK_SIZE }}
     >
       {pokes.map((poke, i) => (
-        <div
-          key={i}
-          style={{
-            flex: "1 0 auto",
-            height: poke ? BLOCK_SIZE : 0,
-            backgroundImage: textureSrc ? `url(${textureSrc})` : undefined,
-            backgroundColor: textureSrc ? undefined : color,
-            backgroundSize: `${BLOCK_SIZE}px ${BLOCK_SIZE}px`,
-            backgroundPosition: "bottom",
-            imageRendering: "pixelated",
-          }}
-        />
+        <div key={i} style={{ flex: "1 0 auto", height: poke ? BLOCK_SIZE : 0, ...tile }} />
       ))}
     </div>
   );

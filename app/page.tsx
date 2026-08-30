@@ -12,7 +12,7 @@ import { FaqSection } from "@/components/sections/faq-section";
 import { FloatingIslandBase } from "@/components/sections/floating-island-base";
 import { PreviousEventsSection } from "@/components/sections/previous-events-section";
 import { SponsorsSection } from "@/components/sections/sponsors-section";
-import { TimelineSection } from "@/components/sections/timeline-section";
+import { DEEPSLATE_DARKEN, TimelineSection } from "@/components/sections/timeline-section";
 import { TracksSection } from "@/components/sections/tracks-section";
 import { VoidFooter } from "@/components/sections/void-footer";
 import { EVENT } from "@/util/event";
@@ -63,9 +63,19 @@ export default function Home() {
       <AboutSection />
       <BlockTransition id="about-tracks" top={dirtTexture} bottom={stoneTexture} />
       <TracksSection />
-      <BlockTransition id="tracks-timeline" top={stoneTexture} bottom={deepslateTexture} />
+      <BlockTransition
+        id="tracks-timeline"
+        top={stoneTexture}
+        bottom={deepslateTexture}
+        bottomDarken={DEEPSLATE_DARKEN}
+      />
       <TimelineSection />
-      <BlockTransition id="timeline-sponsors" top={deepslateTexture} bottom={bedrockTexture} />
+      <BlockTransition
+        id="timeline-sponsors"
+        top={deepslateTexture}
+        bottom={bedrockTexture}
+        topDarken={DEEPSLATE_DARKEN}
+      />
       <SponsorsSection />
       <BlockTransition id="sponsors-previous-events" top={bedrockTexture} bottom={netherrackTexture} />
       <PreviousEventsSection />
