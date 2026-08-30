@@ -100,6 +100,7 @@ export function PreviousEventsSection() {
   return (
     <BlockSection
       id="previous-events"
+      eyebrow="▸ Click an icon to open its journal"
       title="Previous Events"
       texture={netherrackTexture}
       fallbackColor="#5b2b2b"
@@ -108,16 +109,6 @@ export function PreviousEventsSection() {
       align="left"
       maxWidthClassName="max-w-4xl"
     >
-      <p
-        className="text-xs uppercase tracking-[0.15em] text-white/60 sm:text-sm"
-        style={{
-          fontFamily: PIXEL_FONT,
-          textShadow: "1px 1px 0 rgba(0,0,0,0.7)",
-        }}
-      >
-        ▸ Click an icon to open its journal
-      </p>
-
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {PAST_EVENTS.map((event, index) => (
           <PictureFrame

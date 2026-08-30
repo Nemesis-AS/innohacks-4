@@ -339,6 +339,7 @@ export function PrizesSection() {
   return (
     <BlockSection
       id="prizes"
+      eyebrow="Somebody buried the loot. We drew you a map."
       title="Prizes"
       texture={sculkStillTexture}
       fallbackColor="#0d1217"
@@ -346,10 +347,6 @@ export function PrizesSection() {
       seam={false}
       maxWidthClassName="max-w-5xl"
     >
-      <p className="mb-6 text-xs text-white/70 md:text-sm" style={{ fontFamily: PIXEL_FONT }}>
-        Somebody buried the loot. We drew you a map.
-      </p>
-
       <div className="relative mx-auto w-full">
         {/* Sculk light pooling under the map, so it reads as lit by the floor. */}
         <div

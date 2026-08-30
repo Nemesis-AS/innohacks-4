@@ -400,6 +400,7 @@ export function SponsorsSection() {
   return (
     <BlockSection
       id="sponsors"
+      eyebrow="▸ The bedrock InnoHacks is built on"
       title="Sponsors"
       texture={bedrockTexture}
       fallbackColor="#2b2b2f"
@@ -409,16 +410,6 @@ export function SponsorsSection() {
       seam={false}
       maxWidthClassName="max-w-5xl"
     >
-      <p
-        className="text-xs uppercase tracking-[0.15em] text-white/60 sm:text-sm"
-        style={{
-          fontFamily: PIXEL_FONT,
-          textShadow: "1px 1px 0 rgba(0,0,0,0.7)",
-        }}
-      >
-        ▸ The bedrock InnoHacks is built on
-      </p>
-
       <div className="relative w-full">
         <PanelGlow />
 

@@ -60,6 +60,7 @@ export function CommunityPartnersSection() {
   return (
     <BlockSection
       id="community-partners"
+      eyebrow="▸ The allies who make the raid possible"
       title="Community Partners"
       texture={netherBricksTexture}
       fallbackColor="#4a1f1f"
@@ -67,13 +68,6 @@ export function CommunityPartnersSection() {
       seam={false}
       maxWidthClassName="max-w-6xl"
     >
-      <p
-        className="text-xs uppercase tracking-[0.15em] text-white/60 sm:text-sm"
-        style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.7)" }}
-      >
-        ▸ The allies who make the raid possible
-      </p>
-
       <div className="relative w-full py-10">
         {reduceMotion ? (
           // No loop to fall out of sync with — one static, wrapped set instead.
