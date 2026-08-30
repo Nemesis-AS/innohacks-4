@@ -12,15 +12,19 @@ const LERP = 0.12;
 // on every rAF tick queues seeks faster than the decoder retires them, which reads as stutter.
 const FRAME = 1 / 30;
 
+// Scrubbing only earns its keep on desktop: a phone has no long, smooth wheel scroll to drive
+// it and seeks a lot worse, so below this width the same footage just plays on a loop.
+const DESKTOP = "(min-width: 768px)";
+
 type HeroVideoProps = {
   progress: MotionValue<number>;
   src: string;
 };
 
 /**
- * Hero backdrop video scrubbed by scroll — the element never plays, its `currentTime` is
- * driven straight off the hero's scroll progress, so scrolling down runs it forward and
- * scrolling up runs it backward.
+ * Hero backdrop video. On desktop the element never plays — its `currentTime` is driven
+ * straight off the hero's scroll progress, so scrolling down runs it forward and scrolling up
+ * runs it backward. On mobile it plays continuously on a loop, ignoring scroll entirely.
  */
 export function HeroVideo({ progress, src }: HeroVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -48,18 +52,36 @@ export function HeroVideo({ progress, src }: HeroVideoProps) {
     readDuration();
     video.addEventListener("loadedmetadata", readDuration);
 
-    // Safari refuses to decode or seek a video that has never been played, so the hero would
-    // sit on its poster forever on iOS. One muted play/pause on the first interaction unlocks it.
-    const unlock = () => {
-      video.play().then(() => video.pause()).catch(() => {});
-    };
-    window.addEventListener("pointerdown", unlock, { once: true });
-    window.addEventListener("touchstart", unlock, { once: true });
-
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let frame = 0;
+    const desktop = window.matchMedia(DESKTOP);
 
-    if (!reduced) {
+    let frame = 0;
+    let unlock: (() => void) | null = null;
+
+    const start = () => {
+      // Reduced motion gets a still frame either way — no scrub, no playback.
+      if (reduced) return;
+
+      if (!desktop.matches) {
+        video.loop = true;
+        // Muted + `playsInline` is enough for iOS/Android to allow this without a gesture.
+        video.play().catch(() => {});
+        return;
+      }
+
+      // Safari refuses to decode or seek a video that has never been played, so the hero would
+      // sit on its poster forever on iOS. One muted play/pause on the first interaction unlocks
+      // it. Scrub mode only: in loop mode this would stop the playback we just asked for.
+      unlock = () => {
+        video.play().then(() => video.pause()).catch(() => {});
+      };
+      window.addEventListener("pointerdown", unlock, { once: true });
+      window.addEventListener("touchstart", unlock, { once: true });
+
+      // Pick the chase up from wherever the frame actually is, so switching over from loop
+      // playback eases towards the scroll position instead of sweeping back from zero.
+      currentRef.current = video.currentTime;
+
       const tick = () => {
         frame = requestAnimationFrame(tick);
         if (video.readyState < 2) return;
@@ -72,13 +94,35 @@ export function HeroVideo({ progress, src }: HeroVideoProps) {
         }
       };
       frame = requestAnimationFrame(tick);
-    }
+    };
+
+    const stop = () => {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      if (unlock) {
+        window.removeEventListener("pointerdown", unlock);
+        window.removeEventListener("touchstart", unlock);
+        unlock = null;
+      }
+      video.loop = false;
+      video.pause();
+    };
+
+    // Re-run on breakpoint changes so a resize or an orientation flip doesn't strand the video
+    // in the other mode — looping under a scroll that should scrub it, or frozen with nothing
+    // driving it.
+    const swap = () => {
+      stop();
+      start();
+    };
+
+    start();
+    desktop.addEventListener("change", swap);
 
     return () => {
-      cancelAnimationFrame(frame);
+      stop();
+      desktop.removeEventListener("change", swap);
       video.removeEventListener("loadedmetadata", readDuration);
-      window.removeEventListener("pointerdown", unlock);
-      window.removeEventListener("touchstart", unlock);
     };
   }, [progress]);
 

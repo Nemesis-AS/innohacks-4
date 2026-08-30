@@ -10,7 +10,7 @@ const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospac
  * an enchanted item shimmers in-game. Hard colour stops rather than a soft gradient:
  * a blurred sheen reads as generic web chrome next to the pixel art.
  */
-function Glint({ delay = 0 }: { delay?: number }) {
+export function Glint({ delay = 0 }: { delay?: number }) {
   return (
     <motion.span
       aria-hidden
@@ -41,6 +41,8 @@ type MinecraftButtonProps = {
   glint?: boolean;
   /** Seconds to offset the glint loop by, to stagger a row of glinting buttons. */
   glintDelay?: number;
+  /** Set to "_blank" for links that leave the page; `rel` is filled in to match. */
+  target?: string;
   className?: string;
   "aria-label"?: string;
   children: ReactNode;
@@ -54,6 +56,7 @@ export function MinecraftButton({
   textColor,
   glint = false,
   glintDelay = 0,
+  target,
   className = "",
   "aria-label": ariaLabel,
   children,
@@ -63,6 +66,8 @@ export function MinecraftButton({
   return (
     <motion.a
       href={href}
+      target={target}
+      rel={target === "_blank" ? "noopener noreferrer" : undefined}
       aria-label={ariaLabel}
       className={`pointer-events-auto relative inline-flex select-none items-center justify-center gap-2 overflow-hidden uppercase tracking-[0.15em] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
         className || "px-8 py-3 text-sm md:text-base"

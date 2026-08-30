@@ -21,6 +21,9 @@ const VENUE_MAP_URL = "https://maps.app.goo.gl/e5pt4dcFpn7SivZr5";
 
 const CONTACTS = [
   { label: "innogeeks@kiet.edu", href: "mailto:innogeeks@kiet.edu" },
+  { label: "innohacks@kiet.edu", href: "mailto:innohacks@kiet.edu" },
+  { label: "+91 95283 87308", href: "tel:+91 95283 87308" },
+  { label: "+91 99539 75398", href: "tel:+91 99539 75398" },
 ];
 
 const QUICK_LINKS = [
@@ -79,7 +82,11 @@ export function VoidFooter() {
       <div className="relative z-10 grid w-full max-w-6xl gap-12 md:grid-cols-3 md:items-start md:gap-8">
         {/* Left: identity and venue. */}
         <div className="flex flex-col items-center gap-4 text-center md:items-start md:text-left">
-          <img src={logoImg.src} alt="InnoHacks 4.0" className="h-10 w-auto md:h-12" />
+          <img
+            src={logoImg.src}
+            alt="InnoHacks 4.0"
+            className="h-10 w-auto md:h-12"
+          />
           <address className="flex flex-col gap-1 not-italic">
             {VENUE.map((line) => (
               <span
