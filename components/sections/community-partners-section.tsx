@@ -1,6 +1,7 @@
 "use client";
 
 import { useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
 import netherBricksTexture from "@/assets/nether_bricks.png";
 import { MinecraftButton } from "@/components/minecraft-ui";
 import { EVENT } from "@/util/event";
@@ -49,8 +50,24 @@ function Plaques({ scale }: { scale: number }) {
   );
 }
 
+/** Matches Tailwind's md breakpoint; seeded false so SSR and hydration agree. */
+function useIsDesktop() {
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 768px)");
+    const update = () => setIsDesktop(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+  return isDesktop;
+}
+
 export function CommunityPartnersSection() {
   const reduceMotion = useReducedMotion() ?? false;
+  const isDesktop = useIsDesktop();
+  // Touch has no hover to pause the marquee with, so a tap toggles it instead.
+  const [paused, setPaused] = useState(false);
   const duration = PARTNERS.length * SECONDS_PER_PLAQUE;
 
   // Fades the plaques into the brickwork instead of letting overflow-hidden slice them.
@@ -72,16 +89,22 @@ export function CommunityPartnersSection() {
         {reduceMotion ? (
           // No loop to fall out of sync with — one static, wrapped set instead.
           <div className="flex flex-wrap justify-center gap-y-6">
-            <Plaques scale={2} />
+            <Plaques scale={isDesktop ? 2 : 1} />
           </div>
         ) : (
           <div
             className="group relative overflow-hidden"
             style={{ maskImage: edgeFade, WebkitMaskImage: edgeFade }}
+            onPointerDown={(event) => {
+              if (event.pointerType !== "mouse") setPaused((wasPaused) => !wasPaused);
+            }}
           >
             <div
               className="flex w-max group-hover:[animation-play-state:paused]"
-              style={{ animation: `plaque-marquee ${duration}s linear infinite` }}
+              style={{
+                animation: `plaque-marquee ${duration}s linear infinite`,
+                animationPlayState: paused ? "paused" : undefined,
+              }}
             >
               <Plaques scale={3} />
               {/* Second copy is decorative — it would otherwise duplicate every partner link to assistive tech. */}
@@ -98,6 +121,7 @@ export function CommunityPartnersSection() {
         color="#c084fc"
         borderColor="#5b2d80"
         textColor="#1a1206"
+        glint
         aria-label="Email us about becoming a community partner"
       >
         Become a Partner

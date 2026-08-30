@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { StaticImageData } from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import bedrockTexture from "@/assets/bedrock.png";
 import devfolioLogo from "@/assets/devfolio.png";
 import diamondOre from "@/assets/diamond_deepslate.png";
@@ -22,7 +22,8 @@ import Lucr8Logo from "@/assets/sponsors/lucr8.jpeg";
 import MentorXLogo from "@/assets/sponsors/mentorx.png";
 import RevUpLogo from "@/assets/sponsors/revup.png";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { DUR_MICRO, DUR_REVEAL, EASE, POP_SPRING, VIEWPORT, VIEWPORT_TALL } from "@/util/motion";
+import { bevelWell, FOCUS_RING, PIXEL_FONT, SHADOW_SMALL, TIER_COLORS } from "@/util/ui";
 
 // Vanilla container-GUI palette, sampled from assets/container/generic_54.png.
 const PANEL_BG = "#c6c6c6";
@@ -92,7 +93,7 @@ const TIERS: Tier[] = [
   {
     id: "hosting",
     label: "Hosting Partner",
-    pip: "#5ff2f2",
+    pip: TIER_COLORS.diamond,
     slotWidth: 300,
     slotHeight: 140,
     // There's only ever one host, so no empty slots to fill out a row.
@@ -102,7 +103,7 @@ const TIERS: Tier[] = [
   {
     id: "gold",
     label: "Gold",
-    pip: "#fcdc5f",
+    pip: TIER_COLORS.gold,
     slotWidth: 300,
     slotHeight: 140,
     perRow: 3,
@@ -111,7 +112,7 @@ const TIERS: Tier[] = [
   {
     id: "silver",
     label: "Silver",
-    pip: "#dcdcdc",
+    pip: TIER_COLORS.silver,
     slotWidth: 232,
     slotHeight: 112,
     perRow: 4,
@@ -120,7 +121,7 @@ const TIERS: Tier[] = [
   {
     id: "bronze",
     label: "Technical Partner",
-    pip: "#c87137",
+    pip: TIER_COLORS.bronze,
     slotWidth: 232,
     slotHeight: 112,
     perRow: 4,
@@ -235,11 +236,11 @@ function ItemTooltip({ name, tier }: { name: string; tier: Tier }) {
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap"
+      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-max max-w-[min(20rem,80vw)] -translate-x-1/2"
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 4 }}
-      transition={{ duration: 0.12, ease: "easeOut" }}
+      transition={{ duration: DUR_MICRO, ease: EASE }}
       // The 1px gradient border is a painted parent rather than a border-image, which
       // can't take a gradient without also stretching the corners.
       style={{
@@ -276,6 +277,11 @@ function Slot({
 }) {
   const [hovered, setHovered] = useState(false);
   const filled = Boolean(sponsor);
+  // Touch has no hover, so a tap reveals the tooltip and it folds away on its own.
+  const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (touchTimer.current) clearTimeout(touchTimer.current);
+  }, []);
 
   const body = (
     <>
@@ -302,7 +308,7 @@ function Slot({
           style={{
             fontFamily: PIXEL_FONT,
             color: LOCKED_TEXT,
-            textShadow: "1px 1px 0 rgba(0,0,0,0.5)",
+            textShadow: SHADOW_SMALL,
           }}
         >
           ???
@@ -322,8 +328,7 @@ function Slot({
   // 3px bevels crop it down to a thin coloured rim just inside them.
   const bevel = [
     filled ? `inset 0 0 0 ${BEVEL * 2}px ${tier.pip}55` : null,
-    `inset ${BEVEL}px ${BEVEL}px 0 ${SLOT_DARK}`,
-    `inset -${BEVEL}px -${BEVEL}px 0 ${SLOT_LIGHT}`,
+    bevelWell(BEVEL, SLOT_DARK, SLOT_LIGHT),
     // The slot lights up in its tier colour on hover. An outer ring rather than a
     // drop-shadow on the logo, which most sponsors' white backing plate would swallow.
     filled && hovered ? `0 0 0 2px ${tier.pip}88, 0 0 16px ${tier.pip}66` : null,
@@ -345,23 +350,25 @@ function Slot({
   // overflow-hidden lives here rather than on the motion wrapper so it clips the
   // glint sweep without also clipping the tooltip, which sits outside the slot.
   const slotClassName =
-    "group relative flex items-center justify-center overflow-hidden";
+    `group relative flex items-center justify-center overflow-hidden ${FOCUS_RING}`;
 
   return (
     <motion.div
       className="relative"
       initial={{ opacity: 0, scale: 0.9 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={
-        reduceMotion
-          ? { duration: 0.3 }
-          : { type: "spring", stiffness: 380, damping: 16, delay }
-      }
+      viewport={VIEWPORT}
+      transition={reduceMotion ? { duration: 0.3 } : { ...POP_SPRING, delay }}
       whileHover={reduceMotion || !filled ? undefined : { y: -3 }}
-      onHoverStart={() => setHovered(true)}
+      onHoverStart={() => filled && setHovered(true)}
       onHoverEnd={() => setHovered(false)}
-      onFocus={() => setHovered(true)}
+      onTapStart={(event) => {
+        if (!filled || (event as PointerEvent).pointerType === "mouse") return;
+        setHovered(true);
+        if (touchTimer.current) clearTimeout(touchTimer.current);
+        touchTimer.current = setTimeout(() => setHovered(false), 2200);
+      }}
+      onFocus={() => filled && setHovered(true)}
       onBlur={() => setHovered(false)}
       style={{ width: tier.slotWidth, maxWidth: "100%" }}
     >
@@ -417,8 +424,8 @@ export function SponsorsSection() {
           className="relative z-10 w-full p-5 md:p-7"
           initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          viewport={VIEWPORT_TALL}
+          transition={{ duration: DUR_REVEAL, ease: EASE }}
           style={{
             backgroundColor: PANEL_BG,
             boxShadow: `inset ${BEVEL + 1}px ${BEVEL + 1}px 0 ${PANEL_LIGHT}, inset -${BEVEL + 1}px -${BEVEL + 1}px 0 ${PANEL_DARK}, 0 12px 0 rgba(0,0,0,0.35), 0 18px 32px rgba(0,0,0,0.45)`,
@@ -507,7 +514,7 @@ export function SponsorsSection() {
       <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
         <MinecraftButton
           href={`mailto:${EVENT.email}?subject=${encodeURIComponent("Sponsorship Inquiry — InnoHacks 4.0")}`}
-          color="#fcdc5f"
+          color={TIER_COLORS.gold}
           borderColor="#7a6410"
           textColor="#2a2205"
           glint
@@ -519,7 +526,7 @@ export function SponsorsSection() {
         <MinecraftButton
           href="/innohacks-4-brochure.pdf"
           target="_blank"
-          color="#c87137"
+          color={TIER_COLORS.bronze}
           borderColor="#5e3116"
           glint
           glintDelay={GLINT_STAGGER}

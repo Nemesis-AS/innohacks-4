@@ -26,7 +26,8 @@ export function DevfolioButton() {
 
   return (
     <motion.div
-      className="pointer-events-auto"
+      // Fluid width: a fixed 312px overflows the hero panel on phones narrower than ~440px.
+      className="pointer-events-auto w-full max-w-[312px]"
       whileHover={{ scale: 1.04 }}
       whileTap={{ scale: 0.97 }}
       transition={{ duration: 0.12 }}
@@ -35,7 +36,7 @@ export function DevfolioButton() {
         className="apply-button"
         data-hackathon-slug={HACKATHON_SLUG}
         data-button-theme="light"
-        style={{ height: 44, width: 312 }}
+        style={{ height: 44, width: "100%" }}
       />
     </motion.div>
   );

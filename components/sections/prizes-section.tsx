@@ -8,6 +8,7 @@ import sculkStillTexture from "@/assets/sculk_still.png";
 import sculkVeinStillTexture from "@/assets/sculk_vein_still.png";
 import { BlockSection } from "./block-section";
 
+import { VIEWPORT, VIEWPORT_TALL } from "@/util/motion";
 import { PIXEL_FONT } from "@/util/ui";
 
 /** Brightest colour in the sculk palette — what the floor glows with. */
@@ -320,7 +321,7 @@ function Rod({ edge, reduceMotion }: { edge: "top" | "bottom"; reduceMotion: boo
       }}
       initial={{ scaleX: 0 }}
       whileInView={{ scaleX: 1 }}
-      viewport={{ once: true, amount: 0.3 }}
+      viewport={VIEWPORT}
       transition={{ duration: reduceMotion ? 0 : UNFURL, ease: "easeOut" }}
     />
   );
@@ -367,7 +368,7 @@ export function PrizesSection() {
             style={{ transformOrigin: "center" }}
             initial={{ scaleY: 0.04, opacity: 0 }}
             whileInView={{ scaleY: 1, opacity: 1 }}
-            viewport={{ once: true, amount: 0.2 }}
+            viewport={VIEWPORT_TALL}
             transition={{ duration: reduceMotion ? 0 : UNFURL, ease: "easeOut" }}
           >
             <img
@@ -384,13 +385,13 @@ export function PrizesSection() {
               style={{ fontFamily: PIXEL_FONT, color: AGED_INK, textShadow: AGED_EMBOSS }}
               initial={{ opacity: 0, y: 6 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
+              viewport={VIEWPORT_TALL}
               transition={{ duration: 0.3, ease: "easeOut", delay: reduceMotion ? 0 : UNFURL }}
             >
               <div className="text-2xl uppercase tracking-[0.16em] sm:text-4xl" style={{ fontWeight: 700 }}>
                 Coming soon
               </div>
-              <div className="mt-3 text-[11px] leading-snug opacity-75 sm:text-sm">
+              <div className="mt-3 text-[11px] leading-snug sm:text-sm">
                 The X&apos;s go on once the prize pool is confirmed.
               </div>
             </motion.div>

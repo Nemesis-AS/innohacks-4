@@ -13,7 +13,8 @@ import oakSignTexture from "@/assets/oak_sign.png";
 import stoneTexture from "@/assets/stone.png";
 import { BlockSection } from "./block-section";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { VIEWPORT } from "@/util/motion";
+import { EMBOSS_LIGHT, PIXEL_FONT } from "@/util/ui";
 
 /**
  * Burnt-in sign text. Near-black rather than brown, and with no highlight on
@@ -21,7 +22,7 @@ import { PIXEL_FONT } from "@/util/ui";
  * counters at 12px and turns the paragraph to mush.
  */
 const CARVED_TEXT = "#241608";
-const HEADING_SHADOW = "1px 1px 0 rgba(255,255,255,0.22)";
+const HEADING_SHADOW = EMBOSS_LIGHT;
 
 /**
  * The oak grain is high-frequency noise directly behind small text, so it is
@@ -166,7 +167,7 @@ function TrackSign({
         style={{ transformOrigin: "top center" }}
         initial={{ opacity: 0, rotate: 0 }}
         animate={controls}
-        viewport={{ once: true, amount: 0.3 }}
+        viewport={VIEWPORT}
         onViewportEnter={settle}
         onHoverStart={nudge}
         // Touch has no hover, so a tap is the nudge there.

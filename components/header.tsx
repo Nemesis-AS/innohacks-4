@@ -8,7 +8,7 @@ import grassTexture from "@/assets/grass.png";
 import logoMarkImg from "@/assets/logo-mark.png";
 import { useHeaderFade } from "./use-header-fade";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { FOCUS_RING, PIXEL_FONT, SHADOW_SMALL } from "@/util/ui";
 const GRASS_TILE = 16;
 const GRASS_CAP_HEIGHT = 10;
 const DIRT_TILE = 32;
@@ -76,7 +76,7 @@ export function Header() {
           <a
             href="#hero"
             onClick={(event) => handleNavClick(event, "#hero")}
-            className="flex shrink-0 select-none items-center"
+            className={`flex shrink-0 select-none items-center ${FOCUS_RING}`}
           >
             {/* Just the H mark here — the full wordmark is right below in the hero. The mark is
                 dirt-and-stone on a dirt bar, so it needs the dark halo to hold its silhouette. */}
@@ -96,8 +96,8 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 onClick={(event) => handleNavClick(event, link.href)}
-                className="px-3 py-1.5 text-xs uppercase tracking-[0.15em] text-white/85 transition-colors hover:text-white"
-                style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.6)" }}
+                className={`px-3 py-1.5 text-xs uppercase tracking-[0.15em] text-white/85 transition-colors hover:text-white ${FOCUS_RING}`}
+                style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
               >
                 {link.label}
               </a>
@@ -108,7 +108,7 @@ export function Header() {
             onClick={() => setIsMenuOpen((open) => !open)}
             aria-expanded={isMenuOpen}
             aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="flex shrink-0 flex-col items-center justify-center gap-1.5 p-2 md:hidden"
+            className={`flex shrink-0 flex-col items-center justify-center gap-1.5 p-3 md:hidden ${FOCUS_RING}`}
           >
             <span
               className="block h-[2px] w-5 bg-white/85 transition-transform"
@@ -153,8 +153,8 @@ export function Header() {
                     key={link.href}
                     href={link.href}
                     onClick={(event) => handleNavClick(event, link.href)}
-                    className="border-t border-white/10 px-2 py-2.5 text-[11px] uppercase tracking-[0.15em] text-white/85 transition-colors first:border-t-0 hover:text-white"
-                    style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.6)" }}
+                    className={`border-t border-white/10 px-2 py-3.5 text-[11px] uppercase tracking-[0.15em] text-white/85 transition-colors first:border-t-0 hover:text-white ${FOCUS_RING}`}
+                    style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
                   >
                     {link.label}
                   </a>

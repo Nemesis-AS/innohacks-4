@@ -8,7 +8,7 @@ import { AdvancementToast } from "./advancement-toast";
 import { SocialLinks } from "./social-links";
 import { VoidNoiseBackground } from "./void-noise-background";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { FOCUS_RING, PIXEL_FONT, SHADOW_TEXT } from "@/util/ui";
 
 // Placeholder venue lines — confirm the exact street address before launch.
 const VENUE = [
@@ -46,7 +46,7 @@ function ColumnHeading({ children }: { children: React.ReactNode }) {
       className="text-xs uppercase tracking-[0.2em] text-white md:text-sm"
       style={{
         fontFamily: PIXEL_FONT,
-        textShadow: "2px 2px 0 rgba(0,0,0,0.5)",
+        textShadow: SHADOW_TEXT,
       }}
     >
       {children}
@@ -100,7 +100,7 @@ export function VoidFooter() {
               href={VENUE_MAP_URL}
               target="_blank"
               rel="noreferrer noopener"
-              className="mt-1 text-xs text-white/70 underline underline-offset-4 transition-colors hover:text-white md:text-sm"
+              className={`-my-1.5 mt-1 inline-block py-1.5 text-xs text-white/70 underline underline-offset-4 transition-colors hover:text-white md:text-sm ${FOCUS_RING}`}
               style={{ fontFamily: PIXEL_FONT }}
             >
               View on Google Maps
@@ -126,7 +126,7 @@ export function VoidFooter() {
                 <a
                   key={contact.label}
                   href={contact.href}
-                  className="text-xs text-white/70 transition-colors hover:text-white md:text-sm"
+                  className={`-my-1.5 inline-block py-1.5 text-xs text-white/70 transition-colors hover:text-white md:text-sm ${FOCUS_RING}`}
                   style={{ fontFamily: PIXEL_FONT }}
                 >
                   {contact.label}
@@ -146,7 +146,7 @@ export function VoidFooter() {
                   {...(link.newTab
                     ? { target: "_blank", rel: "noreferrer noopener" }
                     : {})}
-                  className="text-xs text-white/70 transition-colors hover:text-white md:text-sm"
+                  className={`-my-1.5 inline-block py-1.5 text-xs text-white/70 transition-colors hover:text-white md:text-sm ${FOCUS_RING}`}
                   style={{ fontFamily: PIXEL_FONT }}
                 >
                   {link.label}
@@ -159,7 +159,7 @@ export function VoidFooter() {
 
       <div className="relative z-10 w-full max-w-6xl border-t border-white/10 pt-6">
         <p
-          className="text-center text-[10px] uppercase tracking-[0.15em] text-white/45 md:text-xs"
+          className="text-center text-[11px] uppercase tracking-[0.15em] text-white/70 md:text-xs"
           style={{ fontFamily: PIXEL_FONT }}
         >
           © 2026 Innogeeks · KIET Deemed to be University

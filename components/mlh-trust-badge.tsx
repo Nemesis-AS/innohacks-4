@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { useHeaderFade } from "./use-header-fade";
+import { FOCUS_RING } from "@/util/ui";
 
 const BADGE_HREF =
   "https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2026-season&utm_content=white";
@@ -24,7 +25,7 @@ export function MlhTrustBadge() {
       href={BADGE_HREF}
       target="_blank"
       rel="noreferrer"
-      className="fixed left-[62px] top-0 z-[10000] block w-[60px] md:pointer-events-auto! md:left-auto md:right-[50px] md:w-[10%] md:opacity-100! md:min-w-[60px] md:max-w-[100px]"
+      className={`fixed left-[62px] top-0 z-[10000] block w-[60px] md:pointer-events-auto! md:left-auto md:right-[50px] md:w-[10%] md:opacity-100! md:min-w-[60px] md:max-w-[100px] ${FOCUS_RING}`}
       style={{ opacity, pointerEvents }}
     >
       <img src={BADGE_SRC} alt="Major League Hacking 2026 Hackathon Season" className="w-full" />

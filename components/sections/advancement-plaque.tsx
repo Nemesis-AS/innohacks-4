@@ -3,7 +3,7 @@
 import type { StaticImageData } from "next/image";
 import widgetsTexture from "@/assets/advancements/widgets.png";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { EMBOSS_LIGHT, PIXEL_FONT, SHADOW_SMALL } from "@/util/ui";
 
 /**
  * Geometry within assets/advancements/widgets.png — the vanilla advancement-tree
@@ -135,11 +135,12 @@ export function AdvancementPlaque({
         <span
           className="overflow-hidden text-ellipsis whitespace-nowrap"
           style={{
-            color: locked ? "#888888" : "#ffffff",
+            color: locked ? "#888888" : "#3a2a17",
             fontFamily: PIXEL_FONT,
             fontSize: 8 * scale,
             lineHeight: 1,
-            textShadow: "1px 1px 0 rgba(0,0,0,0.5)",
+            // Dark ink on the gold band takes a light emboss; a dark shadow only muddies it.
+            textShadow: locked ? SHADOW_SMALL : EMBOSS_LIGHT,
           }}
         >
           {locked ? "???" : name}

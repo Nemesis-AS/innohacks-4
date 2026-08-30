@@ -2,15 +2,21 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useId, useState, type ReactNode } from "react";
+import { wash } from "@/util/texture";
 import deepslateTexture from "@/assets/deepslate.png";
 import stoneTexture from "@/assets/stone.png";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { DUR_MICRO } from "@/util/motion";
+import { bevel, bevelHover, bevelPressed, PIXEL_FONT, SHADOW_SMALL } from "@/util/ui";
 const PANEL_TILE = 32;
 
-const RAISED_BEVEL = "inset 2px 2px 0 rgba(255,255,255,0.25), inset -2px -2px 0 rgba(0,0,0,0.4)";
-const HOVER_BEVEL = "inset 2px 2px 0 rgba(255,255,255,0.38), inset -2px -2px 0 rgba(0,0,0,0.35)";
-const PRESSED_BEVEL = "inset -2px -2px 0 rgba(255,255,255,0.2), inset 2px 2px 0 rgba(0,0,0,0.45)";
+const RAISED_BEVEL = bevel(2);
+const HOVER_BEVEL = bevelHover(2);
+const PRESSED_BEVEL = bevelPressed(2);
+
+/** Vanilla stone is too bright for white 14px type (~4:1), so the button rows take the
+ * same blue-black wash family as the answer panel, just lighter. */
+const BUTTON_WASH = 0.4;
 
 export type AccordionItem = { question: string; answer: ReactNode; list?: string[] };
 export type AccordionGroup = { category: string; items: AccordionItem[] };
@@ -51,6 +57,9 @@ function AccordionRow({
 }) {
   const panelId = useId();
   const buttonId = `${panelId}-button`;
+  // Hover and keyboard focus share the raised-bevel feedback; a CSS transition
+  // eases it instead of the old imperative style snap.
+  const [highlighted, setHighlighted] = useState(false);
 
   return (
     <div className="flex flex-col">
@@ -62,23 +71,22 @@ function AccordionRow({
         aria-controls={panelId}
         className="group flex cursor-pointer items-center justify-between gap-3 px-4 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/70"
         style={{
-          backgroundImage: `url(${stoneTexture.src})`,
-          backgroundSize: `${PANEL_TILE}px ${PANEL_TILE}px`,
+          backgroundImage: `linear-gradient(${wash(BUTTON_WASH)}, ${wash(BUTTON_WASH)}), url(${stoneTexture.src})`,
+          backgroundSize: `auto, ${PANEL_TILE}px ${PANEL_TILE}px`,
           backgroundRepeat: "repeat",
           imageRendering: "pixelated",
           border: "2px solid #1f1f1f",
-          boxShadow: isOpen ? PRESSED_BEVEL : RAISED_BEVEL,
+          boxShadow: isOpen ? PRESSED_BEVEL : highlighted ? HOVER_BEVEL : RAISED_BEVEL,
+          transition: "box-shadow 150ms ease-out",
         }}
-        onMouseEnter={(event) => {
-          if (!isOpen) event.currentTarget.style.boxShadow = HOVER_BEVEL;
-        }}
-        onMouseLeave={(event) => {
-          if (!isOpen) event.currentTarget.style.boxShadow = RAISED_BEVEL;
-        }}
+        onMouseEnter={() => setHighlighted(true)}
+        onMouseLeave={() => setHighlighted(false)}
+        onFocus={() => setHighlighted(true)}
+        onBlur={() => setHighlighted(false)}
       >
         <span
           className="text-sm uppercase text-white md:text-base"
-          style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.6)" }}
+          style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
         >
           {item.question}
         </span>
@@ -87,9 +95,9 @@ function AccordionRow({
         <motion.span
           aria-hidden
           className="shrink-0 text-base leading-none text-white/80 group-hover:text-white md:text-lg"
-          style={{ fontFamily: PIXEL_FONT, textShadow: "1px 1px 0 rgba(0,0,0,0.6)" }}
+          style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
           animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={reduceMotion ? { duration: 0 } : { duration: 0.2, ease: "easeInOut" }}
+          transition={reduceMotion ? { duration: 0 } : { duration: DUR_MICRO, ease: "easeInOut" }}
         >
           ▾
         </motion.span>
@@ -109,7 +117,7 @@ function AccordionRow({
             style={{
               // Deepslate under a dark wash: reads as the same material family as
               // the stone button without competing with the text set on it.
-              backgroundImage: `linear-gradient(rgba(12,12,14,0.82), rgba(12,12,14,0.82)), url(${deepslateTexture.src})`,
+              backgroundImage: `linear-gradient(${wash(0.82)}, ${wash(0.82)}), url(${deepslateTexture.src})`,
               backgroundSize: `auto, ${PANEL_TILE}px ${PANEL_TILE}px`,
               backgroundRepeat: "repeat",
               imageRendering: "pixelated",
@@ -124,7 +132,7 @@ function AccordionRow({
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={
-                reduceMotion ? { duration: 0 } : { duration: 0.2, delay: 0.1, ease: "easeOut" }
+                reduceMotion ? { duration: 0 } : { duration: DUR_MICRO, delay: 0.1, ease: "easeOut" }
               }
               className="px-4 py-3 text-xs leading-relaxed text-white/80 md:text-sm"
               style={{ fontFamily: PIXEL_FONT }}

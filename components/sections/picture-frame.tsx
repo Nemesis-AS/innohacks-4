@@ -1,11 +1,12 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import type { KeyboardEvent, ReactNode } from "react";
 import oakLogTexture from "@/assets/oak_log.png";
 
 const FRAME_TILE = 32;
-import { PIXEL_FONT } from "@/util/ui";
+import { DUR_REVEAL, EASE, VIEWPORT } from "@/util/motion";
+import { PIXEL_FONT, SHADOW_SMALL, SHADOW_TEXT } from "@/util/ui";
 
 type PictureFrameProps = {
   caption?: string;
@@ -20,14 +21,15 @@ type PictureFrameProps = {
 /** Minecraft-style picture frame: thick wood-textured border with a beveled, 3D inset, fading in from below as it scrolls into view. */
 export function PictureFrame({ caption, delay = 0, children, onActivate, ariaLabel }: PictureFrameProps) {
   const interactive = Boolean(onActivate);
+  const reduceMotion = useReducedMotion();
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50 }}
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.5, ease: "easeOut", delay }}
-      whileHover={interactive ? { y: -4 } : undefined}
+      viewport={VIEWPORT}
+      transition={{ duration: DUR_REVEAL, ease: EASE, delay }}
+      whileHover={interactive && !reduceMotion ? { y: -4 } : undefined}
       {...(interactive
         ? {
             role: "button" as const,
@@ -61,7 +63,7 @@ export function PictureFrame({ caption, delay = 0, children, onActivate, ariaLab
         }}
       >
         <div
-          className="flex aspect-[4/3] items-center justify-center overflow-hidden p-4 grayscale transition-[filter] duration-300 ease-out group-hover:grayscale-0"
+          className="flex aspect-[4/3] items-center justify-center overflow-hidden p-4 transition-[filter] duration-300 ease-out md:grayscale md:group-hover:grayscale-0"
           style={{
             backgroundColor: "#1c1c1c",
             boxShadow: "inset 0 4px 10px rgba(0,0,0,0.6), inset 0 0 0 2px rgba(0,0,0,0.5)",
@@ -73,7 +75,7 @@ export function PictureFrame({ caption, delay = 0, children, onActivate, ariaLab
       {caption && (
         <span
           className="text-center text-sm uppercase tracking-[0.15em] text-white md:text-base"
-          style={{ fontFamily: PIXEL_FONT, textShadow: "2px 2px 0 rgba(0,0,0,0.85)" }}
+          style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_TEXT }}
         >
           {caption}
         </span>
@@ -81,8 +83,8 @@ export function PictureFrame({ caption, delay = 0, children, onActivate, ariaLab
       {interactive && (
         <span
           aria-hidden
-          className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          style={{ fontFamily: PIXEL_FONT }}
+          className="text-center text-[10px] uppercase tracking-[0.2em] text-white/75 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
+          style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
         >
           ▸ Open journal
         </span>

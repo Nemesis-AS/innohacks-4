@@ -13,7 +13,8 @@ import oakLogTexture from "@/assets/oak_log.png";
 import railStrip from "@/assets/rail_strip.png";
 import { BlockSection } from "./block-section";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { DUR_MICRO, VIEWPORT } from "@/util/motion";
+import { PIXEL_FONT, SHADOW_SMALL } from "@/util/ui";
 /** The oak peg each row's rail is pinned to the chain by. */
 const PEG_SIZE = 16;
 
@@ -220,7 +221,7 @@ function Rail({ reduceMotion }: { reduceMotion: boolean }) {
       className="absolute inset-x-0 top-1/2"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
-      viewport={{ once: true, amount: 0.4 }}
+      viewport={VIEWPORT}
       transition={{ duration: reduceMotion ? 0.3 : 0.5, ease: "easeOut" }}
       style={{
         height: RAIL_HEIGHT,
@@ -381,13 +382,16 @@ export function TimelineSection() {
                     : { opacity: 0, x: isDesktop ? haul : isRight ? NUDGE : -NUDGE }
                 }
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
+                whileHover={reduceMotion ? undefined : { filter: "brightness(1.06)" }}
+                viewport={VIEWPORT}
                 transition={{
                   duration: reduceMotion ? 0.3 : isDesktop ? 0.85 : 0.5,
                   ease: "easeOut",
                   // Its own faster leg, so the cart is visible for the length of
                   // the haul instead of fading up as it arrives.
                   opacity: { duration: 0.3, ease: "easeOut" },
+                  // Hover brightness answers the pointer at micro speed, not haul speed.
+                  filter: { duration: DUR_MICRO, ease: "easeOut" },
                 }}
                 className={`relative ml-14 flex flex-col gap-1.5 px-6 py-5 md:ml-0 ${isRight ? "md:col-start-2" : ""}`}
                 style={{
@@ -434,19 +438,19 @@ export function TimelineSection() {
 
                 <span
                   className="text-xs uppercase tracking-[0.2em] text-white/70 md:text-sm"
-                  style={{ fontFamily: PIXEL_FONT }}
+                  style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
                 >
                   {event.time}
                 </span>
                 <span
                   className="text-sm uppercase text-white md:text-base"
-                  style={{ fontFamily: PIXEL_FONT }}
+                  style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
                 >
                   {event.title}
                 </span>
                 <span
                   className="text-xs text-white/80 md:text-sm"
-                  style={{ fontFamily: PIXEL_FONT }}
+                  style={{ fontFamily: PIXEL_FONT, textShadow: SHADOW_SMALL }}
                 >
                   {event.description}
                 </span>

@@ -1,15 +1,18 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import dirtTexture from "@/assets/dirt.png";
+import { VIEWPORT, DUR_REVEAL, EASE } from "@/util/motion";
+import { PIXEL_FONT } from "@/util/ui";
 import { BlockSection } from "./block-section";
 import { BookPage } from "./book-page";
 import { QuestBoard } from "./quest-board";
 
-import { PIXEL_FONT } from "@/util/ui";
 const INK = "#3a2a17";
 
 export function AboutSection() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <BlockSection
       id="about"
@@ -20,10 +23,10 @@ export function AboutSection() {
     >
       <div className="grid w-full gap-6 md:grid-cols-2 md:items-stretch md:gap-0">
         <motion.div
-          initial={{ opacity: 0, x: -60 }}
+          initial={{ opacity: 0, x: reduceMotion ? 0 : -60 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          viewport={VIEWPORT}
+          transition={{ duration: DUR_REVEAL, ease: EASE }}
         >
           {/* Left page: mirrored so its stitched spine sits on the right, against the right page's spine. */}
           <BookPage flip className="h-full">
@@ -33,7 +36,7 @@ export function AboutSection() {
             >
               About
             </h2>
-            <p style={{ color: `${INK}d9`, fontFamily: PIXEL_FONT }}>
+            <p className="text-sm md:text-base" style={{ color: `${INK}d9`, fontFamily: PIXEL_FONT }}>
               Innohacks 4.0 is Innogeeks’ flagship 24-hour national hackathon,
               bringing together the brightest student innovators to solve
               real-world challenges through technology. Hosted at KIET Deemed to
@@ -48,10 +51,10 @@ export function AboutSection() {
           </BookPage>
         </motion.div>
         <motion.div
-          initial={{ opacity: 0, x: 60 }}
+          initial={{ opacity: 0, x: reduceMotion ? 0 : 60 }}
           whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.5, ease: "easeOut", delay: 0.15 }}
+          viewport={VIEWPORT}
+          transition={{ duration: DUR_REVEAL, ease: EASE, delay: 0.15 }}
         >
           {/* Right page: spine stays on the left, matching the mirrored left page across the middle. */}
           <BookPage className="h-full">
