@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { bevel, PIXEL_FONT, SHADOW_TEXT } from "@/util/ui";
 
 /**
  * Enchantment glint — a pair of hard-edged bands sweeping across the button, the way
@@ -76,10 +76,10 @@ export function MinecraftButton({
         fontFamily: PIXEL_FONT,
         color: textColor ?? "#fff",
         // A dark shadow under near-black text on a bright fill just muddies it.
-        textShadow: textColor ? undefined : "2px 2px 0 rgba(0,0,0,0.5)",
+        textShadow: textColor ? undefined : SHADOW_TEXT,
         background: color,
         border: `2px solid ${borderColor}`,
-        boxShadow: "inset 3px 3px 0 rgba(255,255,255,0.25), inset -3px -3px 0 rgba(0,0,0,0.35)",
+        boxShadow: bevel(3),
         outlineColor: borderColor,
       }}
       whileHover={{ scale: 1.02, filter: "brightness(1.1)" }}
@@ -102,7 +102,7 @@ export function PixelBadge({ children }: { children: ReactNode }) {
         color: "#3a2a18",
         background: "#a9772f",
         border: "2px solid #2b1d10",
-        boxShadow: "inset 2px 2px 0 rgba(255,255,255,0.25), inset -2px -2px 0 rgba(0,0,0,0.35)",
+        boxShadow: bevel(2),
       }}
     >
       {children}

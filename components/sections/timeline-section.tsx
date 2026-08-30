@@ -307,7 +307,6 @@ export function TimelineSection() {
   return (
     <BlockSection
       id="timeline"
-      eyebrow="Deepslate Block"
       title="Timeline"
       texture={deepslateTexture}
       fallbackColor="#3a3a3e"

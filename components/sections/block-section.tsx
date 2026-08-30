@@ -5,7 +5,16 @@ import { BlockBackground } from "./block-background";
 import { BlockSeam, seedFromId } from "./block-seam";
 import { OreOverlay } from "./ore-overlay";
 
-import { PIXEL_FONT } from "@/util/ui";
+import { EMBOSS_LIGHT, PIXEL_FONT, SHADOW_HEADING, SHADOW_SMALL } from "@/util/ui";
+
+/** Rough perceived-lightness test so dark ink (FAQ's endstone) gets a light emboss, not a dark drop. */
+function isDarkInk(hex: string) {
+  const m = /^#([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return false;
+  const n = parseInt(m[1], 16);
+  const luma = 0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
+  return luma < 128;
+}
 
 type BlockSectionProps = {
   id: string;
@@ -30,7 +39,7 @@ type BlockSectionProps = {
 /** Full-screen page section with a tiled block-texture (or placeholder) background. */
 export function BlockSection({
   id,
-  // eyebrow,
+  eyebrow,
   title,
   texture,
   fallbackColor,
@@ -62,10 +71,26 @@ export function BlockSection({
           maxWidthClassName ?? (isLeft ? "max-w-5xl" : "max-w-2xl")
         } ${isLeft ? "items-stretch text-left" : "items-center text-center"}`}
       >
+        {eyebrow && (
+          <p
+            className="text-xs uppercase tracking-[0.15em] opacity-80 sm:text-sm"
+            style={{
+              color: textColor,
+              fontFamily: PIXEL_FONT,
+              textShadow: isDarkInk(textColor) ? EMBOSS_LIGHT : SHADOW_SMALL,
+            }}
+          >
+            {eyebrow}
+          </p>
+        )}
         {title && (
           <h2
             className="text-3xl uppercase md:text-5xl"
-            style={{ color: textColor, fontFamily: PIXEL_FONT, textShadow: "3px 3px 0 rgba(0,0,0,0.35)" }}
+            style={{
+              color: textColor,
+              fontFamily: PIXEL_FONT,
+              textShadow: isDarkInk(textColor) ? EMBOSS_LIGHT : SHADOW_HEADING,
+            }}
           >
             {title}
           </h2>
