@@ -8,7 +8,7 @@ import grassTexture from "@/assets/grass.png";
 import logoMarkImg from "@/assets/logo-mark.png";
 import { useHeaderFade } from "./use-header-fade";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 const GRASS_TILE = 16;
 const GRASS_CAP_HEIGHT = 10;
 const DIRT_TILE = 32;

@@ -24,7 +24,7 @@ export function BookPage({ flip = false, className = "", children }: BookPagePro
       />
       {/* The parchment asset's painted border eats a lot of a phone's width, so the
           inset steps up with the breakpoint rather than starting at desktop size. */}
-      <div className="relative z-10 flex h-full flex-col gap-3 px-7 py-9 sm:px-10 sm:py-12 md:px-14 md:py-16">
+      <div className="relative z-10 flex h-full flex-col gap-3 px-8 py-10 sm:px-10 sm:py-12 md:px-14 md:py-16">
         {children}
       </div>
     </div>

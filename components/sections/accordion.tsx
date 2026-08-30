@@ -5,7 +5,7 @@ import { useId, useState, type ReactNode } from "react";
 import deepslateTexture from "@/assets/deepslate.png";
 import stoneTexture from "@/assets/stone.png";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 const PANEL_TILE = 32;
 
 const RAISED_BEVEL = "inset 2px 2px 0 rgba(255,255,255,0.25), inset -2px -2px 0 rgba(0,0,0,0.4)";

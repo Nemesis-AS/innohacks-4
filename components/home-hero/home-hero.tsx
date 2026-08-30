@@ -75,7 +75,7 @@ export function HomeHero() {
   return (
     <>
       {/* Scroll spacer — local scroll distance the video scrub plays out over */}
-      <main id="hero" ref={heroRef} className="relative" style={{ height: "280vh" }}>
+      <main id="hero" ref={heroRef} className="relative h-[100dvh] md:h-[280vh]">
         <div className="sticky top-0 h-screen overflow-hidden">
           <HeroVideo progress={progress} src="/hero.mp4" />
 

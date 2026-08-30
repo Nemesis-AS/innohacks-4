@@ -5,7 +5,7 @@ import type { KeyboardEvent, ReactNode } from "react";
 import oakLogTexture from "@/assets/oak_log.png";
 
 const FRAME_TILE = 32;
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 type PictureFrameProps = {
   caption?: string;

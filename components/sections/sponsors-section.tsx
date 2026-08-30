@@ -22,8 +22,7 @@ import Lucr8Logo from "@/assets/sponsors/lucr8.jpeg";
 import MentorXLogo from "@/assets/sponsors/mentorx.png";
 import RevUpLogo from "@/assets/sponsors/revup.png";
 
-const PIXEL_FONT =
-  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 // Vanilla container-GUI palette, sampled from assets/container/generic_54.png.
 const PANEL_BG = "#c6c6c6";

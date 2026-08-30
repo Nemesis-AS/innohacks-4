@@ -2,6 +2,7 @@
 
 import { DevfolioButton } from "./devfolio-button";
 import { PixelBadge } from "@/components/minecraft-ui";
+import { PIXEL_FONT } from "@/util/ui";
 
 const EVENT_DATES = "Oct 3–4, 2026";
 
@@ -14,7 +15,7 @@ export function EventInfo() {
         style={{
           color: "#f5ead0",
           textShadow: "2px 2px 0 rgba(0,0,0,0.55)",
-          fontFamily: "var(--font-minecraft), ui-monospace, 'Courier New', monospace",
+          fontFamily: PIXEL_FONT,
         }}
       >
         Join us at KIET Deemed to be University

@@ -8,7 +8,7 @@ import sculkStillTexture from "@/assets/sculk_still.png";
 import sculkVeinStillTexture from "@/assets/sculk_vein_still.png";
 import { BlockSection } from "./block-section";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 /** Brightest colour in the sculk palette — what the floor glows with. */
 const SCULK_GLINT = "41, 223, 235";

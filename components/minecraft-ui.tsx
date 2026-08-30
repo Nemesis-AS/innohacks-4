@@ -3,7 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 /**
  * Enchantment glint — a pair of hard-edged bands sweeping across the button, the way

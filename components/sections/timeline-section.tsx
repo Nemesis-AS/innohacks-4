@@ -13,8 +13,7 @@ import oakLogTexture from "@/assets/oak_log.png";
 import railStrip from "@/assets/rail_strip.png";
 import { BlockSection } from "./block-section";
 
-const PIXEL_FONT =
-  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 /** The oak peg each row's rail is pinned to the chain by. */
 const PEG_SIZE = 16;
 

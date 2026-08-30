@@ -30,8 +30,7 @@ import IWOC3 from "@/assets/events/iwoc/IWOC-3.webp";
 import IWOC4 from "@/assets/events/iwoc/IWOC-4.webp";
 import IWOC5 from "@/assets/events/iwoc/IWOC-5.webp";
 
-const PIXEL_FONT =
-  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 // Frames without a photo render a placeholder caption until the real image lands.
 // TODO: fill in real `date`, `location`, `blurb`, `stats`, and `gallery` per event.

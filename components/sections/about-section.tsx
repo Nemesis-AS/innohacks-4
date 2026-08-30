@@ -6,8 +6,7 @@ import { BlockSection } from "./block-section";
 import { BookPage } from "./book-page";
 import { QuestBoard } from "./quest-board";
 
-const PIXEL_FONT =
-  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 const INK = "#3a2a17";
 
 export function AboutSection() {

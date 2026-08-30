@@ -5,7 +5,7 @@ import { BlockBackground } from "./block-background";
 import { BlockSeam, seedFromId } from "./block-seam";
 import { OreOverlay } from "./ore-overlay";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 type BlockSectionProps = {
   id: string;

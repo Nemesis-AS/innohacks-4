@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { BookPage } from "./book-page";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 /** Motion-enhanced Next.js Image so the gallery hero can still fade between photos. */
 const MotionImage = motion.create(Image);

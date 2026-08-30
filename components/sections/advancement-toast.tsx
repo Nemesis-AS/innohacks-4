@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import type { StaticImageData } from "next/image";
 import toastsTexture from "@/assets/toasts.png";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 /**
  * Geometry of the advancement toast within assets/toasts.png: a 160x32 sprite at the

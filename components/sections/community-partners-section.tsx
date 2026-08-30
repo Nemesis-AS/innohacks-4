@@ -7,7 +7,7 @@ import { EVENT } from "@/util/event";
 import { AdvancementPlaque, type Partner } from "./advancement-plaque";
 import { BlockSection } from "./block-section";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 /**
  * Fortress interiors are lit by lava, not daylight. Exported so the neighbouring

@@ -8,8 +8,7 @@ import { AdvancementToast } from "./advancement-toast";
 import { SocialLinks } from "./social-links";
 import { VoidNoiseBackground } from "./void-noise-background";
 
-const PIXEL_FONT =
-  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 // Placeholder venue lines — confirm the exact street address before launch.
 const VENUE = [

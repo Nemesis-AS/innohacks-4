@@ -3,7 +3,7 @@
 import type { StaticImageData } from "next/image";
 import widgetsTexture from "@/assets/advancements/widgets.png";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 /**
  * Geometry within assets/advancements/widgets.png — the vanilla advancement-tree

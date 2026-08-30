@@ -13,8 +13,7 @@ import oakSignTexture from "@/assets/oak_sign.png";
 import stoneTexture from "@/assets/stone.png";
 import { BlockSection } from "./block-section";
 
-const PIXEL_FONT =
-  "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 
 /**
  * Burnt-in sign text. Near-black rather than brown, and with no highlight on

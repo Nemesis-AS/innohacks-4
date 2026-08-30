@@ -1,6 +1,6 @@
 import { MinecraftButton } from "@/components/minecraft-ui";
 
-const PIXEL_FONT = "var(--font-minecraft), ui-monospace, 'Courier New', monospace";
+import { PIXEL_FONT } from "@/util/ui";
 const INK = "#3a2a17";
 const CONTACT_EMAIL = "innogeeks@kiet.edu";
 
