@@ -25,7 +25,7 @@
  *      a transparent-black canvas means a dark halo all the way round.
  */
 import { readFileSync, writeFileSync } from "node:fs";
-import { decodePng, encodePng } from "./png.mjs";
+import { decodePng, encodePng, resample } from "./png.mjs";
 
 /** Below this, a pixel counts as padding rather than art. */
 const ALPHA_FLOOR = 8;
@@ -109,50 +109,11 @@ function crop(image, bounds) {
 
 // --- Downscale -------------------------------------------------------------
 
-/** Box filter, averaging in premultiplied alpha so edges keep their colour. */
+/** Shrinks to fit `maxWidth`, keeping the aspect ratio. Never enlarges. */
 function downscale(image, maxWidth) {
   if (image.width <= maxWidth) return image;
-
-  const width = maxWidth;
   const height = Math.max(1, Math.round((image.height * maxWidth) / image.width));
-  const rgba = Buffer.alloc(width * height * 4);
-
-  for (let y = 0; y < height; y++) {
-    const top = Math.floor((y * image.height) / height);
-    const bottom = Math.max(top + 1, Math.floor(((y + 1) * image.height) / height));
-
-    for (let x = 0; x < width; x++) {
-      const left = Math.floor((x * image.width) / width);
-      const right = Math.max(left + 1, Math.floor(((x + 1) * image.width) / width));
-
-      let r = 0;
-      let g = 0;
-      let b = 0;
-      let a = 0;
-      let count = 0;
-
-      for (let sy = top; sy < bottom; sy++) {
-        for (let sx = left; sx < right; sx++) {
-          const at = (sy * image.width + sx) * 4;
-          const alpha = image.rgba[at + 3];
-          r += image.rgba[at] * alpha;
-          g += image.rgba[at + 1] * alpha;
-          b += image.rgba[at + 2] * alpha;
-          a += alpha;
-          count++;
-        }
-      }
-
-      const at = (y * width + x) * 4;
-      if (a === 0) continue; // leave it transparent black
-      rgba[at] = Math.round(r / a);
-      rgba[at + 1] = Math.round(g / a);
-      rgba[at + 2] = Math.round(b / a);
-      rgba[at + 3] = Math.round(a / count);
-    }
-  }
-
-  return { width, height, rgba };
+  return resample(image, maxWidth, height);
 }
 
 // --- Run -------------------------------------------------------------------

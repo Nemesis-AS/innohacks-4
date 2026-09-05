@@ -1,5 +1,5 @@
 /**
- * A minimal PNG decoder and encoder, shared by the art-generation scripts.
+ * A minimal PNG decoder, encoder and resampler, shared by the art-generation scripts.
  *
  * Small enough not to be worth a dependency, and the alternatives (sharp, pngjs)
  * would pull a native build step into a repo that otherwise installs clean.
@@ -179,4 +179,57 @@ export function encodePng(width, height, rgba) {
     chunk("IDAT", deflateSync(raw, { level: 9 })),
     chunk("IEND", Buffer.alloc(0)),
   ]);
+}
+
+// --- Resample --------------------------------------------------------------
+
+/**
+ * Box filter to an exact size, averaging in premultiplied alpha.
+ *
+ * Averaging straight RGBA drags the colour of the transparent pixels into the
+ * edge, which on a transparent-black canvas means a dark halo all the way round.
+ *
+ * @returns {{ width: number, height: number, rgba: Buffer }}
+ */
+export function resample(image, width, height) {
+  if (image.width === width && image.height === height) return image;
+
+  const rgba = Buffer.alloc(width * height * 4);
+
+  for (let y = 0; y < height; y++) {
+    const top = Math.floor((y * image.height) / height);
+    const bottom = Math.max(top + 1, Math.floor(((y + 1) * image.height) / height));
+
+    for (let x = 0; x < width; x++) {
+      const left = Math.floor((x * image.width) / width);
+      const right = Math.max(left + 1, Math.floor(((x + 1) * image.width) / width));
+
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      let a = 0;
+      let count = 0;
+
+      for (let sy = top; sy < bottom; sy++) {
+        for (let sx = left; sx < right; sx++) {
+          const at = (sy * image.width + sx) * 4;
+          const alpha = image.rgba[at + 3];
+          r += image.rgba[at] * alpha;
+          g += image.rgba[at + 1] * alpha;
+          b += image.rgba[at + 2] * alpha;
+          a += alpha;
+          count++;
+        }
+      }
+
+      const at = (y * width + x) * 4;
+      if (a === 0) continue; // leave it transparent black
+      rgba[at] = Math.round(r / a);
+      rgba[at + 1] = Math.round(g / a);
+      rgba[at + 2] = Math.round(b / a);
+      rgba[at + 3] = Math.round(a / count);
+    }
+  }
+
+  return { width, height, rgba };
 }

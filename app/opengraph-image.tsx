@@ -10,6 +10,14 @@ export const contentType = "image/png";
 const asset = (...parts: string[]) => readFile(join(process.cwd(), "assets", ...parts));
 const dataUri = (buf: Buffer) => `data:image/png;base64,${buf.toString("base64")}`;
 
+/**
+ * Satori sizes an <img> only from the width and height it is handed, so the
+ * logo's are measured off its IHDR rather than written down here — a redrawn
+ * logo at a new aspect ratio would otherwise arrive stretched.
+ */
+const LOGO_WIDTH = 900;
+const logoHeight = (png: Buffer) => Math.round((LOGO_WIDTH * png.readUInt32BE(20)) / png.readUInt32BE(16));
+
 export default async function OpengraphImage() {
   const [logo, grass, dirt, minecraft, minecraftBold] = await Promise.all([
     asset("logo.png"),
@@ -47,7 +55,7 @@ export default async function OpengraphImage() {
         </div>
 
         {/* eslint-disable-next-line @next/next/no-img-element -- satori renders raw <img>; next/image is unavailable here. */}
-        <img src={dataUri(logo)} alt="" width={900} height={237} style={{ marginTop: 28 }} />
+        <img src={dataUri(logo)} alt="" width={LOGO_WIDTH} height={logoHeight(logo)} style={{ marginTop: 28 }} />
 
         <div
           style={{
