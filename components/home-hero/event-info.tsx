@@ -3,8 +3,7 @@
 import { DevfolioButton } from "./devfolio-button";
 import { PixelBadge } from "@/components/minecraft-ui";
 import { PIXEL_FONT } from "@/util/ui";
-
-const EVENT_DATES = "Oct 3–4, 2026";
+import { EVENT } from "@/util/event";
 
 /** Headline, dates, and the register CTA shown beneath the logo. */
 export function EventInfo() {
@@ -20,7 +19,7 @@ export function EventInfo() {
       >
         Join us at KIET Deemed to be University
       </p>
-      <PixelBadge>{EVENT_DATES}</PixelBadge>
+      <PixelBadge>{EVENT.dates}</PixelBadge>
       <DevfolioButton />
     </div>
   );

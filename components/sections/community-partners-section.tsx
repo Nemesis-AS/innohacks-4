@@ -3,6 +3,8 @@
 import { useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import netherBricksTexture from "@/assets/nether_bricks.png";
+import hackShastraLogo from "@/assets/partners/hackshastra.png";
+import innoFusionLogo from "@/assets/partners/innofusion.png";
 import { MinecraftButton } from "@/components/minecraft-ui";
 import { EVENT } from "@/util/event";
 import { AdvancementPlaque, type Partner } from "./advancement-plaque";
@@ -29,14 +31,24 @@ const PLAQUE_GAP = 40;
  * still locked renders as a grey "???" advancement rather than an empty gap.
  */
 const PARTNERS: Partner[] = [
-  { name: "Partner 1", locked: true },
-  { name: "Partner 2", locked: true },
-  { name: "Partner 3", locked: true },
-  { name: "Partner 4", locked: true },
-  { name: "Partner 5", locked: true },
-  { name: "Partner 6", locked: true },
-  { name: "Partner 7", locked: true },
-  { name: "Partner 8", locked: true },
+  {
+    name: "HackShastra",
+    logo: hackShastraLogo,
+    logoBg: "#ffffff",
+    alt: "HACKSHASTRA LOGO",
+  },
+  {
+    name: "InnoFusion",
+    logo: innoFusionLogo,
+    logoBg: "#000000",
+    alt: "INNOFUSION LOGO",
+  },
+  // { name: "Partner 3", locked: true },
+  // { name: "Partner 4", locked: true },
+  // { name: "Partner 5", locked: true },
+  // { name: "Partner 6", locked: true },
+  // { name: "Partner 7", locked: true },
+  // { name: "Partner 8", locked: true },
 ];
 
 /** One copy of the plaque list. Rendered twice into the marquee track. */

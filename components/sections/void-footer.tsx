@@ -18,11 +18,15 @@ const VENUE = [
 ];
 const VENUE_MAP_URL = "https://maps.app.goo.gl/e5pt4dcFpn7SivZr5";
 
-const CONTACTS = [
+/** `name` labels the person behind a number; email rows carry none. */
+type Contact = { label: string; href: string; name?: string };
+
+// Placeholder contact names — swap in the actual organisers before launch.
+const CONTACTS: Contact[] = [
   { label: "innogeeks@kiet.edu", href: "mailto:innogeeks@kiet.edu" },
   { label: "innohacks@kiet.edu", href: "mailto:innohacks@kiet.edu" },
-  { label: "+91 95283 87308", href: "tel:+91 95283 87308" },
-  { label: "+91 99539 75398", href: "tel:+91 99539 75398" },
+  { name: "Vansh Agrawal", label: "+91 95283 87308", href: "tel:+919528387308" },
+  { name: "Sarthak Goel", label: "+91 99539 75398", href: "tel:+919953975398" },
 ];
 
 const QUICK_LINKS = [
@@ -121,14 +125,19 @@ export function VoidFooter() {
         <div className="flex flex-col items-center gap-8 text-center md:items-end md:text-right">
           <div className="flex flex-col items-center gap-3 md:items-end">
             <ColumnHeading>Contact Us</ColumnHeading>
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-2.5">
               {CONTACTS.map((contact) => (
                 <a
-                  key={contact.label}
+                  key={contact.href}
                   href={contact.href}
-                  className={`-my-1.5 inline-block py-1.5 text-xs text-white/70 transition-colors hover:text-white md:text-sm ${FOCUS_RING}`}
+                  className={`group -my-1.5 inline-block py-1.5 text-xs text-white/70 transition-colors hover:text-white md:text-sm ${FOCUS_RING}`}
                   style={{ fontFamily: PIXEL_FONT }}
                 >
+                  {contact.name ? (
+                    <span className="block text-[11px] text-white/45 transition-colors group-hover:text-white/70 md:text-xs">
+                      {contact.name}
+                    </span>
+                  ) : null}
                   {contact.label}
                 </a>
               ))}

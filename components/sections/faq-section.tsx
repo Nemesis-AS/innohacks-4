@@ -59,7 +59,7 @@ const FAQ_GROUPS: AccordionGroup[] = [
         answer: "The hackathon comprises two phases:",
         list: [
           "Ideation Phase: Online idea submission phase.",
-          "Offline Hackathon: Shortlisted teams will be invited to an offline hackathon held on the 3rd & 4th of October 2026 on the KIET campus.",
+          "Offline Hackathon: Shortlisted teams will be invited to an offline hackathon held on the 10th & 11th of October 2026 on the KIET campus.",
         ],
       },
     ],
