@@ -23,6 +23,12 @@ import MentorXLogo from "@/assets/sponsors/mentorx.png";
 import RevUpLogo from "@/assets/sponsors/revup.png";
 import NavanLogo from "@/assets/sponsors/navan.svg";
 import TbiLogo from "@/assets/sponsors/tbi.png";
+import ElevenLabsLogo from "@/assets/sponsors/elevenlabs.svg";
+import NamoIdLogo from "@/assets/sponsors/namoid.svg";
+import EventopiaLogo from "@/assets/sponsors/eventopia.png";
+import NeuzenLogo from "@/assets/sponsors/neuzen.png";
+import OsenLogo from "@/assets/sponsors/osen.png";
+import TruScholarLogo from "@/assets/sponsors/truscholar.jpeg";
 
 import { DUR_MICRO, DUR_REVEAL, EASE, POP_SPRING, VIEWPORT, VIEWPORT_TALL } from "@/util/motion";
 import { bevelWell, FOCUS_RING, PIXEL_FONT, SHADOW_SMALL, TIER_COLORS } from "@/util/ui";
@@ -160,7 +166,7 @@ const SPONSORS: Sponsor[] = [
   },
   {
     name: "Code Crafters",
-    tier: "bronze",
+    tier: "silver",
     logo: CodeCraftersLogo,
     href: "https://codecrafters.io",
     logoBg: "#ffffff",
@@ -176,7 +182,7 @@ const SPONSORS: Sponsor[] = [
   },
   {
     name: "N8N",
-    tier: "bronze",
+    tier: "gold",
     logo: N8nLogo,
     href: "https://n8n.io",
     logoBg: "#ffffff",
@@ -228,10 +234,55 @@ const SPONSORS: Sponsor[] = [
   },
   {
     name: "Navan AI",
-    tier: "bronze",
+    tier: "silver",
     logoBg: "#ffffff",
     logo: NavanLogo,
     alt: "NAVAN AI LOGO",
+  },
+  {
+    name: "ElevenLabs",
+    tier: "silver",
+    logo: ElevenLabsLogo,
+    href: "https://elevenlabs.io",
+    logoBg: "#ffffff",
+    alt: "ELEVENLABS LOGO",
+  },
+  {
+    name: "NamoID",
+    tier: "bronze",
+    logoBg: "#ffffff",
+    logo: NamoIdLogo,
+    alt: "NAMOID LOGO",
+  },
+  {
+    name: "Eventopia",
+    tier: "bronze",
+    // The mark ships on its own purple field, so the plate matches it rather than
+    // framing it in a white rectangle.
+    logoBg: "#6c4294",
+    logo: EventopiaLogo,
+    alt: "EVENTOPIA LOGO",
+  },
+  {
+    name: "Neuzen",
+    tier: "bronze",
+    logoBg: "#ffffff",
+    logo: NeuzenLogo,
+    alt: "NEUZEN LOGO",
+  },
+  {
+    name: "OSEN",
+    tier: "bronze",
+    logoBg: "#ffffff",
+    logo: OsenLogo,
+    alt: "OSEN LOGO",
+  },
+  {
+    name: "TruScholar",
+    tier: "bronze",
+    logoBg: "#ffffff",
+    logo: TruScholarLogo,
+    alt: "TRUSCHOLAR LOGO",
   },
 ];
 
