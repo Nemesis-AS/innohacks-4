@@ -1,15 +1,22 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useReducedMotion } from "motion/react";
 import type { StaticImageData } from "next/image";
 import { useEffect, useRef, useState } from "react";
 import bedrockTexture from "@/assets/bedrock.png";
+import copperOre from "@/assets/copper_stone.png";
+import cherryPlanks from "@/assets/cherry_planks.png";
 import devfolioLogo from "@/assets/devfolio.png";
 import diamondOre from "@/assets/diamond_deepslate.png";
+import endstone from "@/assets/endstone.png";
 import goldOre from "@/assets/gold_nether.png";
+import grassBlock from "@/assets/grass.png";
 import ironOre from "@/assets/iron_deepslate.png";
-import { Glint, MinecraftButton } from "@/components/minecraft-ui";
+import quartzOre from "@/assets/quartz.png";
+import { MinecraftButton } from "@/components/minecraft-ui";
 import { EVENT } from "@/util/event";
+import { AdvancementFrame, type SponsorMark } from "./advancement-frame";
+import { AdvancementWindow } from "./advancement-window";
 import { BlockSection } from "./block-section";
 
 import CodeCraftersLogo from "@/assets/sponsors/codecrafters.svg";
@@ -29,35 +36,21 @@ import EventopiaLogo from "@/assets/sponsors/eventopia.png";
 import NeuzenLogo from "@/assets/sponsors/neuzen.png";
 import OsenLogo from "@/assets/sponsors/osen.png";
 import TruScholarLogo from "@/assets/sponsors/truscholar.jpeg";
+import WhereUElevateLogo from "@/assets/sponsors/whereuelevate.png";
 
-import { DUR_MICRO, DUR_REVEAL, EASE, POP_SPRING, VIEWPORT, VIEWPORT_TALL } from "@/util/motion";
-import { bevelWell, FOCUS_RING, PIXEL_FONT, SHADOW_SMALL, TIER_COLORS } from "@/util/ui";
-
-// Vanilla container-GUI palette, sampled from assets/container/generic_54.png.
-const PANEL_BG = "#c6c6c6";
-const PANEL_LIGHT = "#ffffff";
-const PANEL_DARK = "#555555";
-const PANEL_TEXT = "#404040";
-const SLOT_BG = "#8b8b8b";
-const SLOT_DARK = "#373737";
-const SLOT_LIGHT = "#ffffff";
-
-/** Unclaimed slots sit a shade darker than a filled one, so the eye lands on real logos first. */
-const SLOT_EMPTY_BG = "#7a7a7a";
-/** Locked-text color for the "???" placeholder in an unclaimed slot. */
-const LOCKED_TEXT = "#ffffff";
-
-/** Vanilla slots are 18px on a 1px bevel. Scaled up here so real logos stay legible. */
-const BEVEL = 3;
+import { TIER_COLORS } from "@/util/ui";
 
 /**
- * Warm tint for the glow behind the chest, matching the gold tier's pip. Kept as a bare
- * rgb triple the way prizes-section.tsx keeps SCULK_GLINT, since each use needs its own alpha.
+ * Warm tint for the glow behind the windows. Kept as a bare rgb triple the way
+ * prizes-section.tsx keeps SCULK_GLINT, since each use needs its own alpha.
  */
 const GLOW_RGB = "252, 220, 95";
 
-/** Seconds between each slot's glint, so a row shimmers out of lockstep rather than in unison. */
+/** Seconds between each frame's glint, so a row shimmers out of lockstep rather than in unison. */
 const GLINT_STAGGER = 1.4;
+
+/** How long a tapped tooltip holds before folding away. Touch has no hover to end it. */
+const TAP_HOLD_MS = 2200;
 
 /**
  * Shared sizing for the two CTAs. MinecraftButton's `className` replaces its default
@@ -66,88 +59,139 @@ const GLINT_STAGGER = 1.4;
  */
 const CTA_SIZE = "w-full max-w-[16rem] px-8 py-3 text-sm md:text-base";
 
-type TierId = "gold" | "hosting" | "title" | "silver" | "bronze";
+type TierId =
+  | "title"
+  | "hosting"
+  | "refreshment"
+  | "certificate"
+  | "platinum"
+  | "gold"
+  | "silver"
+  | "bronze";
 
-type Sponsor = {
-  name: string;
-  tier: TierId;
-  logo?: StaticImageData;
-  href?: string;
-  /** Backing plate behind the logo, for marks that don't carry on the gray slot. */
-  logoBg?: string;
-  /** Defaults to name. Override when the logo needs different alt text. */
-  alt?: string;
-};
+type Sponsor = SponsorMark & { tier: TierId };
 
 type Tier = {
   id: TierId;
   label: string;
-  /** Item-swatch color. Sits on the light panel, so the label text stays dark for contrast. */
+  /** Tier accent, on the title bar's tab square. */
   pip: string;
-  /** Slots are landscape rectangles — most sponsor marks are wordmarks, not square icons. */
-  slotWidth: number;
-  slotHeight: number;
-  /** Slots per row. Extra sponsors wrap onto further rows of the same size. */
-  perRow: number;
+  /** 16x16 block texture, the window's tab icon. */
+  icon: StaticImageData;
+  /** Column counts across the breakpoints. Written out in full so Tailwind can see them. */
+  gridClassName: string;
+  /**
+   * Lowest common multiple of every column count in `gridClassName`. Slot totals round
+   * up to it so the last row is full at every breakpoint at once — which can't be worked
+   * out in JS, because a media query decides how many columns there actually are.
+   */
+  step: number;
+  /** Frame aspect ratio, width over height. Hero tiers get a wider frame. */
+  aspect: number;
   /** Minimum slots to draw. Grows to fit however many sponsors the tier holds. */
-  slotCount: number;
+  slots: number;
+  /**
+   * Caps and centres the frame row. Without it a tier holding one or two sponsors
+   * stretches a single wordmark across the full width of the window.
+   */
+  rowClassName?: string;
 };
 
 /**
- * Ordered like a chest's rows. The hosting partner leads — the platform the whole
- * hackathon runs on — then the title sponsor, then the paid tiers, rarest loot first.
+ * Ordered rarest loot first. The title sponsor leads, then the host, then the paid
+ * tiers. Every tier is its own advancement window, stacked down the section.
  */
 const TIERS: Tier[] = [
   {
     id: "title",
     label: "Title Sponsor",
     pip: TIER_COLORS.emerald,
-    slotWidth: 300,
-    slotHeight: 140,
-    // A single named title sponsor, like the host above it.
-    perRow: 1,
-    slotCount: 1,
+    icon: diamondOre,
+    gridClassName: "grid-cols-1",
+    step: 1,
+    aspect: 2.6,
+    slots: 1,
+    rowClassName: "mx-auto w-full max-w-sm",
   },
   {
     id: "hosting",
     label: "Hosting Partner",
     pip: TIER_COLORS.diamond,
-    slotWidth: 300,
-    slotHeight: 140,
-    // There's only ever one host, so no empty slots to fill out a row.
-    perRow: 1,
-    slotCount: 1,
+    icon: grassBlock,
+    gridClassName: "grid-cols-1",
+    step: 1,
+    aspect: 2.6,
+    slots: 1,
+    rowClassName: "mx-auto w-full max-w-sm",
+  },
+  {
+    id: "refreshment",
+    label: "Refreshment Partner",
+    pip: TIER_COLORS.cherry,
+    icon: cherryPlanks,
+    gridClassName: "grid-cols-1",
+    step: 1,
+    aspect: 2.6,
+    slots: 1,
+    rowClassName: "mx-auto w-full max-w-sm",
+  },
+  {
+    id: "certificate",
+    label: "Certificate Partner",
+    pip: TIER_COLORS.parchment,
+    icon: endstone,
+    gridClassName: "grid-cols-1",
+    step: 1,
+    aspect: 2.6,
+    slots: 1,
+    rowClassName: "mx-auto w-full max-w-sm",
+  },
+  {
+    id: "platinum",
+    label: "Platinum",
+    pip: TIER_COLORS.platinum,
+    icon: quartzOre,
+    gridClassName: "grid-cols-1 sm:grid-cols-2",
+    step: 2,
+    aspect: 2.4,
+    slots: 2,
+    rowClassName: "mx-auto w-full max-w-xl",
   },
   {
     id: "gold",
     label: "Gold",
     pip: TIER_COLORS.gold,
-    slotWidth: 300,
-    slotHeight: 140,
-    perRow: 3,
-    slotCount: 3,
+    icon: goldOre,
+    gridClassName: "grid-cols-1 sm:grid-cols-2",
+    step: 2,
+    aspect: 2.4,
+    slots: 2,
   },
   {
     id: "silver",
     label: "Silver",
     pip: TIER_COLORS.silver,
-    slotWidth: 232,
-    slotHeight: 112,
-    perRow: 4,
-    slotCount: 4,
+    icon: ironOre,
+    gridClassName: "grid-cols-1 sm:grid-cols-3",
+    step: 3,
+    aspect: 2.2,
+    slots: 3,
   },
   {
     id: "bronze",
     label: "Technical Partner",
     pip: TIER_COLORS.bronze,
-    slotWidth: 232,
-    slotHeight: 112,
-    perRow: 4,
-    slotCount: 4,
+    icon: copperOre,
+    gridClassName: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+    // lcm(2, 3, 4) — nine sponsors round up to twelve, filling the last row at 2, 3
+    // and 4 columns alike.
+    step: 12,
+    aspect: 2.2,
+    slots: 12,
   },
 ];
 
-// Add sponsors here as they're confirmed. Unclaimed slots render as locked "???" slots.
+// Add sponsors here as they're confirmed. Unclaimed slots render as locked "???" frames.
 const SPONSORS: Sponsor[] = [
   {
     name: "KIET TBI",
@@ -265,7 +309,7 @@ const SPONSORS: Sponsor[] = [
   },
   {
     name: "Neuzen",
-    tier: "bronze",
+    tier: "refreshment",
     logoBg: "#ffffff",
     logo: NeuzenLogo,
     alt: "NEUZEN LOGO",
@@ -279,19 +323,26 @@ const SPONSORS: Sponsor[] = [
   },
   {
     name: "TruScholar",
-    tier: "bronze",
+    tier: "certificate",
     logoBg: "#ffffff",
     logo: TruScholarLogo,
     alt: "TRUSCHOLAR LOGO",
   },
+  {
+    name: "Where U Elevate",
+    tier: "platinum",
+    logoBg: "#ffffff",
+    logo: WhereUElevateLogo,
+    alt: "WHEREUELEVATE LOGO",
+  },
 ];
 
 /**
- * Warm pool of light behind the chest, lifting it off the bedrock. Built the way
+ * Warm pool of light behind the windows, lifting them off the bedrock. Built the way
  * prizes-section.tsx builds its sculk pool.
  *
  * `-z-10` resolves against BlockSection's `relative z-10` content wrapper — the nearest
- * stacking context — so it paints over the bedrock but under the title and the panel.
+ * stacking context — so it paints over the bedrock but under the windows.
  */
 function PanelGlow() {
   return (
@@ -306,179 +357,84 @@ function PanelGlow() {
 }
 
 /**
- * Vanilla item tooltip: near-black fill inside the purple gradient border the game
- * draws around a hovered stack. Decorative — the slot itself carries the accessible name.
+ * One tier's window and its grid of frames.
+ *
+ * The open tooltip is tracked here rather than inside each frame: on touch there's no
+ * hover to close the last one, so two tapped frames would otherwise both stay open.
+ * One index per window also means one dismissal timer instead of a dozen.
  */
-function ItemTooltip({ name, tier }: { name: string; tier: Tier }) {
-  return (
-    <motion.div
-      aria-hidden
-      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-max max-w-[min(20rem,80vw)] -translate-x-1/2"
-      initial={{ opacity: 0, y: 4 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 4 }}
-      transition={{ duration: DUR_MICRO, ease: EASE }}
-      // The 1px gradient border is a painted parent rather than a border-image, which
-      // can't take a gradient without also stretching the corners.
-      style={{
-        padding: 1,
-        background: "linear-gradient(180deg, #5000ff, #28007f)",
-        border: "2px solid #100010",
-      }}
-    >
-      <div
-        className="flex flex-col gap-0.5 px-2 py-1.5 text-[11px] leading-tight md:text-xs"
-        style={{ backgroundColor: "rgba(16,0,16,0.94)", fontFamily: PIXEL_FONT }}
-      >
-        <span style={{ color: "#ffffff" }}>{name}</span>
-        {/* Minecraft colours an item's rarity line — the tier pip is this section's rarity. */}
-        <span style={{ color: tier.pip }}>{tier.label}</span>
-      </div>
-    </motion.div>
-  );
-}
-
-/** One inventory slot: dark bevel top-left, light bevel bottom-right, like the vanilla GUI. */
-function Slot({
+function TierWindow({
   tier,
-  sponsor,
-  index,
-  delay,
   reduceMotion,
 }: {
   tier: Tier;
-  sponsor?: Sponsor;
-  index: number;
-  delay: number;
   reduceMotion: boolean;
 }) {
-  const [hovered, setHovered] = useState(false);
-  const filled = Boolean(sponsor);
-  // Touch has no hover, so a tap reveals the tooltip and it folds away on its own.
-  const touchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (touchTimer.current) clearTimeout(touchTimer.current);
-  }, []);
+  const [active, setActive] = useState<number | null>(null);
+  const tapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const body = (
-    <>
-      {sponsor?.logo && (
-        // Real logos aren't pixel art, so these render smoothly rather than pixelated.
-        <span
-          className="flex h-full w-full items-center justify-center px-4 py-3"
-          style={
-            sponsor.logoBg ? { backgroundColor: sponsor.logoBg } : undefined
-          }
-        >
-          <img
-            src={sponsor.logo.src}
-            alt={sponsor.alt ?? sponsor.name}
-            className="max-h-full max-w-full object-contain"
-          />
-        </span>
-      )}
-      {!filled && (
-        // Same "???" treatment as a locked advancement, so an unclaimed slot reads as
-        // a mystery still to be revealed rather than as a hole in the grid.
-        <span
-          className="select-none text-lg tracking-[0.2em] md:text-2xl"
-          style={{
-            fontFamily: PIXEL_FONT,
-            color: LOCKED_TEXT,
-            textShadow: SHADOW_SMALL,
-          }}
-        >
-          ???
-        </span>
-      )}
-      {filled && !reduceMotion && <Glint delay={index * GLINT_STAGGER} />}
-      {sponsor?.href && (
-        <span
-          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-100 group-hover:opacity-40"
-          style={{ backgroundColor: "#ffffff" }}
-        />
-      )}
-    </>
+  useEffect(
+    () => () => {
+      if (tapTimer.current) clearTimeout(tapTimer.current);
+    },
+    [],
   );
 
-  // Later shadows paint over earlier ones, so the tier ring is listed first and the
-  // 3px bevels crop it down to a thin coloured rim just inside them.
-  const bevel = [
-    filled ? `inset 0 0 0 ${BEVEL * 2}px ${tier.pip}55` : null,
-    bevelWell(BEVEL, SLOT_DARK, SLOT_LIGHT),
-    // The slot lights up in its tier colour on hover. An outer ring rather than a
-    // drop-shadow on the logo, which most sponsors' white backing plate would swallow.
-    filled && hovered ? `0 0 0 2px ${tier.pip}88, 0 0 16px ${tier.pip}66` : null,
-  ]
-    .filter(Boolean)
-    .join(", ");
+  const filled = SPONSORS.filter((sponsor) => sponsor.tier === tier.id);
+  const wanted = Math.max(tier.slots, Math.ceil(filled.length / tier.step) * tier.step);
 
-  // Aspect ratio rather than a fixed height, so a slot keeps its shape when it
-  // has to shrink to fit a narrow screen.
-  const style = {
-    width: "100%",
-    aspectRatio: `${tier.slotWidth} / ${tier.slotHeight}`,
-    padding: BEVEL * 2,
-    backgroundColor: filled ? SLOT_BG : SLOT_EMPTY_BG,
-    boxShadow: bevel,
-    transition: "box-shadow 150ms ease-out",
+  const activate = (index: number) => (on: boolean, viaTouch?: boolean) => {
+    if (tapTimer.current) clearTimeout(tapTimer.current);
+    if (!on) {
+      setActive((current) => (current === index ? null : current));
+      return;
+    }
+    setActive(index);
+    // Only a tap needs the timer. Hover and focus are closed by their own end events,
+    // and arming it for them would fold the tooltip away under a resting cursor.
+    if (viaTouch) {
+      tapTimer.current = setTimeout(
+        () => setActive((current) => (current === index ? null : current)),
+        TAP_HOLD_MS,
+      );
+    }
   };
 
-  // overflow-hidden lives here rather than on the motion wrapper so it clips the
-  // glint sweep without also clipping the tooltip, which sits outside the slot.
-  const slotClassName =
-    `group relative flex items-center justify-center overflow-hidden ${FOCUS_RING}`;
-
   return (
-    <motion.div
-      className="relative"
-      initial={{ opacity: 0, scale: 0.9 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={VIEWPORT}
-      transition={reduceMotion ? { duration: 0.3 } : { ...POP_SPRING, delay }}
-      whileHover={reduceMotion || !filled ? undefined : { y: -3 }}
-      onHoverStart={() => filled && setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      onTapStart={(event) => {
-        if (!filled || (event as PointerEvent).pointerType === "mouse") return;
-        setHovered(true);
-        if (touchTimer.current) clearTimeout(touchTimer.current);
-        touchTimer.current = setTimeout(() => setHovered(false), 2200);
-      }}
-      onFocus={() => filled && setHovered(true)}
-      onBlur={() => setHovered(false)}
-      style={{ width: tier.slotWidth, maxWidth: "100%" }}
+    <AdvancementWindow
+      title={tier.label}
+      icon={tier.icon}
+      accent={tier.pip}
+      reduceMotion={reduceMotion}
     >
-      {sponsor?.href ? (
-        <a
-          href={sponsor.href}
-          target="_blank"
-          rel="noreferrer noopener"
-          className={slotClassName}
-          style={style}
-        >
-          {body}
-        </a>
-      ) : (
-        <div
-          className={slotClassName}
-          style={style}
-          aria-hidden={!sponsor}
-          title={sponsor?.name}
-        >
-          {body}
-        </div>
-      )}
-      <AnimatePresence>
-        {hovered && (
-          <ItemTooltip key="tip" name={sponsor?.name ?? "???"} tier={tier} />
-        )}
-      </AnimatePresence>
-    </motion.div>
+      <div
+        className={`grid ${tier.gridClassName} ${tier.rowClassName ?? ""}`}
+        style={{ gap: "calc(var(--adv-u) * 4px)" }}
+      >
+        {Array.from({ length: wanted }).map((_, index) => (
+          <AdvancementFrame
+            key={index}
+            sponsor={filled[index]}
+            tierLabel={tier.label}
+            // The tooltip's tier line takes the same accent as the window's tab pip.
+            accent={tier.pip}
+            aspect={tier.aspect}
+            delay={index * 0.03}
+            // Modulo, not a plain stagger: eleven frames at 1.4s apart would leave the
+            // last one waiting fifteen seconds for its first pass.
+            glintDelay={(index % 5) * GLINT_STAGGER}
+            reduceMotion={reduceMotion}
+            active={active === index}
+            onActivate={activate(index)}
+          />
+        ))}
+      </div>
+    </AdvancementWindow>
   );
 }
 
 export function SponsorsSection() {
+  // Read once and threaded down — eighteen frames subscribing individually is waste.
   const reduceMotion = useReducedMotion() ?? false;
 
   return (
@@ -488,106 +444,30 @@ export function SponsorsSection() {
       title="Sponsors"
       texture={bedrockTexture}
       fallbackColor="#2b2b2f"
-      // Treasure ores rather than coal — they carry the same "this is the payoff"
-      // reading as the chest itself.
-      oreTextures={[diamondOre, goldOre, ironOre]}
+      // No ore veins here: the windows already carry the section, and scattered ore
+      // behind seven stacked panels just crowds them.
       seam={false}
       maxWidthClassName="max-w-5xl"
     >
       <div className="relative w-full">
         <PanelGlow />
 
-        <motion.div
-          className="relative z-10 w-full p-5 md:p-7"
-          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={VIEWPORT_TALL}
-          transition={{ duration: DUR_REVEAL, ease: EASE }}
-          style={{
-            backgroundColor: PANEL_BG,
-            boxShadow: `inset ${BEVEL + 1}px ${BEVEL + 1}px 0 ${PANEL_LIGHT}, inset -${BEVEL + 1}px -${BEVEL + 1}px 0 ${PANEL_DARK}, 0 12px 0 rgba(0,0,0,0.35), 0 18px 32px rgba(0,0,0,0.45)`,
-            border: "3px solid rgba(0,0,0,0.55)",
-          }}
-        >
-          {TIERS.map((tier, tierIndex) => {
-            const filled = SPONSORS.filter(
-              (sponsor) => sponsor.tier === tier.id,
-            );
-            // Pad out to whole rows so the tier always reads as complete chest rows.
-            const wanted = Math.max(tier.slotCount, filled.length);
-            const slots = Array.from({
-              length: Math.ceil(wanted / tier.perRow) * tier.perRow,
-            });
-            const rowWidth = tier.perRow * tier.slotWidth;
-
-            return (
-              <div key={tier.id} className={tierIndex === 0 ? "" : "mt-7"}>
-                <div className="mb-3 flex items-center justify-center gap-3">
-                  <span
-                    aria-hidden
-                    className="inline-block shrink-0"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      backgroundColor: tier.pip,
-                      boxShadow: `inset -3px -3px 0 rgba(0,0,0,0.35)`,
-                    }}
-                  />
-                  <span
-                    className="text-base uppercase tracking-[0.2em] md:text-xl"
-                    style={{
-                      color: PANEL_TEXT,
-                      fontFamily: PIXEL_FONT,
-                      fontWeight: 700,
-                    }}
-                  >
-                    {tier.label}
-                  </span>
-                  <span
-                    aria-hidden
-                    className="inline-block shrink-0"
-                    style={{
-                      width: 16,
-                      height: 16,
-                      backgroundColor: tier.pip,
-                      boxShadow: `inset -3px -3px 0 rgba(0,0,0,0.35)`,
-                    }}
-                  />
-                </div>
-                {/* Tier-coloured rule, so four tiers don't run together in one grey field. */}
-                <div
-                  aria-hidden
-                  className="mx-auto mb-3 h-[2px] w-full"
-                  style={{
-                    maxWidth: rowWidth,
-                    backgroundColor: tier.pip,
-                    opacity: 0.75,
-                  }}
-                />
-                <div
-                  className="mx-auto flex flex-wrap justify-center gap-0"
-                  style={{ maxWidth: rowWidth }}
-                >
-                  {slots.map((_, index) => (
-                    <Slot
-                      key={index}
-                      tier={tier}
-                      sponsor={filled[index]}
-                      index={index}
-                      delay={tierIndex * 0.08 + index * 0.03}
-                      reduceMotion={reduceMotion}
-                    />
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </motion.div>
+        {/*
+          --adv-u is one sprite pixel, in rendered px. It has to stay a whole number, or
+          every 1px outline lands on a half pixel and the frames antialias into mush. A
+          CSS variable rather than a JS scale prop so the breakpoint costs no hydration
+          mismatch — see `u()` in util/ui.ts.
+        */}
+        <div className="relative z-10 flex w-full flex-col gap-6 [--adv-u:2] lg:gap-8 lg:[--adv-u:3]">
+          {TIERS.map((tier) => (
+            <TierWindow key={tier.id} tier={tier} reduceMotion={reduceMotion} />
+          ))}
+        </div>
       </div>
 
       {/* Both CTAs share CTA_SIZE so they read as a matched pair rather than a
           button next to an afterthought. Gold leads, bronze follows — the same
-          tier ordering the chest above uses. */}
+          tier ordering the windows above use. */}
       <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
         <MinecraftButton
           href={`mailto:${EVENT.email}?subject=${encodeURIComponent("Sponsorship Inquiry — InnoHacks 4.0")}`}

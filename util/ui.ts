@@ -58,6 +58,12 @@ export const TIER_COLORS = {
   diamond: "#5ff2f2",
   emerald: "#41c65b",
   gold: "#fcdc5f",
+  /** Refreshment partner, taking its cue from the cherry planks on its tab. */
+  cherry: "#e79ba9",
+  /** Certificate partner — the pale endstone on its tab, read as parchment. */
+  parchment: "#e0dca8",
+  /** Platinum, kept cool so it reads apart from silver's neutral grey. */
+  platinum: "#a8c8e8",
   silver: "#dcdcdc",
   bronze: "#c87137",
 } as const;
@@ -79,4 +85,88 @@ export function edgeFadeMask(fade: number) {
  */
 export function bottomFadeMask(rem: number) {
   return `linear-gradient(to bottom, #000 calc(100% - ${rem}rem), transparent 100%)`;
+}
+
+/**
+ * The advancement GUI palette, sampled straight out of assets/advancements/window.png
+ * and assets/advancements/widgets.png.
+ *
+ * The window frame, its item frames and the advancement title bar are all the same
+ * shape in different colours — a 1px black outline, a highlight along the top-left, a
+ * shade along the bottom-right, and a flat body. Not one of them carries a gradient or
+ * a single pixel of decoration, which is what lets them be rebuilt in CSS and stretched
+ * to any size, instead of blitting (and smearing) the bitmap the way a nine-slice would.
+ * The PNGs stay in assets/ as the reference these values were read from.
+ */
+export const GUI = {
+  outline: "#000000",
+  /** Window body. Vanilla reuses the same grey for a locked item frame. */
+  panelBody: "#c6c6c6",
+  panelLight: "#ffffff",
+  panelShade: "#555555",
+  /** Title-bar ink — dark on the grey panel, so it takes EMBOSS_LIGHT, not a drop shadow. */
+  panelInk: "#3f3f3f",
+  /** The content well is a sunken bevel: dark along the top-left, light along the bottom-right. */
+  wellDark: "#212121",
+  wellLight: "#929292",
+  /** Earned gold. `body` fills an item frame, `bar` the slightly lighter title bar. */
+  earnedBody: "#aa7e0f",
+  earnedBar: "#b98f2c",
+  earnedLight: "#dba213",
+  earnedShade: "#493606",
+  /** What a well reads as once the void noise is behind it — the flat stand-in inside a frame. */
+  wellFill: "#0d0d11",
+  /** Vanilla's obtained-description green, the tooltip's second line. */
+  green: "#54fc54",
+} as const;
+
+/**
+ * One sprite pixel, in rendered px. Reads `--adv-u`, the unitless integer multiplier an
+ * advancement window sets on itself (2 on phones, 3 from `lg` up).
+ *
+ * A CSS variable rather than a JS `scale` prop on purpose: the multiplier changes at a
+ * breakpoint, and resolving that in JS means a `matchMedia` effect that can't know the
+ * answer during SSR — a hydration mismatch the pixel chrome would flash through. Kept
+ * unitless so it also multiplies non-lengths, e.g. `font-size: calc(var(--adv-u) * 8px)`.
+ *
+ * It must stay a whole number. At 2.5 every 1px outline lands on a half pixel and the
+ * whole frame antialiases into grey mush that `image-rendering: pixelated` can't rescue.
+ */
+export function u(n: number) {
+  return `calc(var(--adv-u) * ${n}px)`;
+}
+
+/** `u(n)` measured in from the far edge, for gradient stops and clip paths. */
+function un(n: number) {
+  return `calc(100% - var(--adv-u) * ${n}px)`;
+}
+
+/**
+ * The 2px stair-step chamfer every advancement sprite cuts into its corners — one pixel
+ * in on the outermost row, two on the next. A clip path rather than a `border-radius`,
+ * and every segment is axis-aligned, so it stays hard-edged instead of antialiasing the
+ * way a 45° cut would.
+ *
+ * Apply it to a chrome layer, never to a wrapper that also holds content: clip-path
+ * clips descendants, and both a tooltip and a focus ring have to escape their slot.
+ */
+export function chamfer() {
+  const a = u(1);
+  const b = u(2);
+  const ra = un(1);
+  const rb = un(2);
+  return `polygon(${b} 0, ${rb} 0, ${rb} ${a}, ${ra} ${a}, ${ra} ${b}, 100% ${b}, 100% ${rb}, ${ra} ${rb}, ${ra} ${ra}, ${rb} ${ra}, ${rb} 100%, ${b} 100%, ${b} ${ra}, ${a} ${ra}, ${a} ${rb}, 0 ${rb}, 0 ${b}, ${a} ${b}, ${a} ${a}, ${b} ${a})`;
+}
+
+/**
+ * A raised GUI plate in explicit colours: an `edge`-wide highlight along the top-left
+ * and shade along the bottom-right, `edge` counted in sprite pixels. The two insets sit
+ * in opposite corners and never overlap, so the order of the shadow list doesn't matter.
+ *
+ * Takes a number rather than a `u()` string because the bottom-right inset needs a
+ * negative offset, and `-calc(…)` is not valid CSS — the browser drops the whole
+ * declaration silently. The sign has to go inside the calc, which only `u()` can do.
+ */
+export function plate(edge: number, light: string, shade: string) {
+  return `inset ${u(edge)} ${u(edge)} 0 ${light}, inset ${u(-edge)} ${u(-edge)} 0 ${shade}`;
 }
