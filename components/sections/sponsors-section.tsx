@@ -254,6 +254,7 @@ const SPONSORS: Sponsor[] = [
     logo: HoverRobotixLogo,
     logoBg: "#ffffff",
     alt: "HOVERROBOTIX LOGO",
+    href: "https://hoverrobotix.com",
   },
   {
     name: "Lucr8 Ventures",
@@ -268,6 +269,7 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#000000",
     logo: MentorXLogo,
     alt: "MENTORX LOGO",
+    href: "https://thementorx.com",
   },
   {
     name: "RevUp",
@@ -275,6 +277,7 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#006867",
     logo: RevUpLogo,
     alt: "REVUP LOGO",
+    href: "https://revupglobal.in",
   },
   {
     name: "Navan AI",
@@ -282,6 +285,7 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#ffffff",
     logo: NavanLogo,
     alt: "NAVAN AI LOGO",
+    href: "https://navan.ai/",
   },
   {
     name: "ElevenLabs",
@@ -297,15 +301,15 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#ffffff",
     logo: NamoIdLogo,
     alt: "NAMOID LOGO",
+    href: "https://namoid.in",
   },
   {
     name: "Eventopia",
     tier: "bronze",
-    // The mark ships on its own purple field, so the plate matches it rather than
-    // framing it in a white rectangle.
     logoBg: "#6c4294",
     logo: EventopiaLogo,
     alt: "EVENTOPIA LOGO",
+    href: "https://eventopia.in",
   },
   {
     name: "Neuzen",
@@ -313,6 +317,7 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#ffffff",
     logo: NeuzenLogo,
     alt: "NEUZEN LOGO",
+    href: "https://neuzenclub.com",
   },
   {
     name: "OSEN",
@@ -320,6 +325,7 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#ffffff",
     logo: OsenLogo,
     alt: "OSEN LOGO",
+    href: "https://osen.live",
   },
   {
     name: "TruScholar",
@@ -327,6 +333,7 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#ffffff",
     logo: TruScholarLogo,
     alt: "TRUSCHOLAR LOGO",
+    href: "https://www.truscholar.io",
   },
   {
     name: "Where U Elevate",
@@ -334,6 +341,7 @@ const SPONSORS: Sponsor[] = [
     logoBg: "#ffffff",
     logo: WhereUElevateLogo,
     alt: "WHEREUELEVATE LOGO",
+    href: "https://whereuelevate.com",
   },
 ];
 
@@ -381,7 +389,10 @@ function TierWindow({
   );
 
   const filled = SPONSORS.filter((sponsor) => sponsor.tier === tier.id);
-  const wanted = Math.max(tier.slots, Math.ceil(filled.length / tier.step) * tier.step);
+  const wanted = Math.max(
+    tier.slots,
+    Math.ceil(filled.length / tier.step) * tier.step,
+  );
 
   const activate = (index: number) => (on: boolean, viaTouch?: boolean) => {
     if (tapTimer.current) clearTimeout(tapTimer.current);
