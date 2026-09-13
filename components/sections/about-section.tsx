@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import dirtTexture from "@/assets/dirt.png";
+import AboutBgImg from "@/assets/backgrounds/about_bg.png";
 import { VIEWPORT, DUR_REVEAL, EASE } from "@/util/motion";
 import { PIXEL_FONT } from "@/util/ui";
 import { BlockSection } from "./block-section";
@@ -20,6 +21,9 @@ export function AboutSection() {
       fallbackColor="#7c4a2d"
       seam={false}
       align="left"
+      image={AboutBgImg}
+      imageTint={0.25}
+      // edgeBandBlocks={3}
     >
       <div className="grid w-full gap-6 md:grid-cols-2 md:items-stretch md:gap-0">
         <motion.div

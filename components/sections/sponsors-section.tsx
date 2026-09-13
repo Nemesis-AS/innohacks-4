@@ -12,6 +12,7 @@ import cherryPlanks from "@/assets/cherry_planks.png";
 import devfolioLogo from "@/assets/devfolio.png";
 import diamondOre from "@/assets/diamond_deepslate.png";
 import endstone from "@/assets/endstone.png";
+import deepslate from "@/assets/deepslate.png";
 import goldOre from "@/assets/gold_nether.png";
 import grassBlock from "@/assets/grass.png";
 import ironOre from "@/assets/iron_deepslate.png";
@@ -40,6 +41,7 @@ import NeuzenLogo from "@/assets/sponsors/neuzen.png";
 import OsenLogo from "@/assets/sponsors/osen.png";
 import TruScholarLogo from "@/assets/sponsors/truscholar.jpeg";
 import WhereUElevateLogo from "@/assets/sponsors/whereuelevate.png";
+import PruneLogo from "@/assets/sponsors/prune.jpeg";
 
 import { TIER_COLORS } from "@/util/ui";
 
@@ -67,6 +69,7 @@ type TierId =
   | "hosting"
   | "refreshment"
   | "certificate"
+  | "ai"
   | "platinum"
   | "gold"
   | "silver"
@@ -121,6 +124,8 @@ const TIER_ROWS: Tier[][] = [
       slots: 1,
       rowClassName: "mx-auto w-full max-w-sm",
     },
+  ],
+  [
     {
       id: "hosting",
       label: "Hosting Partner",
@@ -132,8 +137,6 @@ const TIER_ROWS: Tier[][] = [
       slots: 1,
       rowClassName: "mx-auto w-full max-w-sm",
     },
-  ],
-  [
     {
       id: "refreshment",
       label: "Refreshment Partner",
@@ -145,11 +148,24 @@ const TIER_ROWS: Tier[][] = [
       slots: 1,
       rowClassName: "mx-auto w-full max-w-sm",
     },
+  ],
+  [
     {
       id: "certificate",
       label: "Certificate Partner",
       pip: TIER_COLORS.parchment,
       icon: endstone,
+      gridClassName: "grid-cols-1",
+      step: 1,
+      aspect: 2.6,
+      slots: 1,
+      rowClassName: "mx-auto w-full max-w-sm",
+    },
+    {
+      id: "ai",
+      label: "AI Partner",
+      pip: TIER_COLORS.white,
+      icon: deepslate,
       gridClassName: "grid-cols-1",
       step: 1,
       aspect: 2.6,
@@ -363,6 +379,14 @@ const SPONSORS: Sponsor[] = [
     alt: "WHEREUELEVATE LOGO",
     href: "https://whereuelevate.com",
   },
+  {
+    name: "Prune",
+    tier: "ai",
+    logoBg: "#000000",
+    logo: PruneLogo,
+    alt: "PRUNE LOGO",
+    href: "https://www.withprune.com",
+  },
 ];
 
 /**
@@ -509,11 +533,17 @@ export function SponsorsSection() {
               // already narrow column would squeeze the logo frame. `items-start` so a row
               // never stretches the shorter window to match its neighbour.
               className={
-                row.length > 1 ? "grid items-start gap-6 md:grid-cols-2 lg:gap-8" : undefined
+                row.length > 1
+                  ? "grid items-start gap-6 md:grid-cols-2 lg:gap-8"
+                  : undefined
               }
             >
               {row.map((tier) => (
-                <TierWindow key={tier.id} tier={tier} reduceMotion={reduceMotion} />
+                <TierWindow
+                  key={tier.id}
+                  tier={tier}
+                  reduceMotion={reduceMotion}
+                />
               ))}
             </div>
           ))}

@@ -62,6 +62,7 @@ export const TIER_COLORS = {
   cherry: "#e79ba9",
   /** Certificate partner — the pale endstone on its tab, read as parchment. */
   parchment: "#e0dca8",
+  white: "#ffffff",
   /** Platinum, kept cool so it reads apart from silver's neutral grey. */
   platinum: "#a8c8e8",
   silver: "#dcdcdc",

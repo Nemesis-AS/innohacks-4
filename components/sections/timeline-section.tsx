@@ -88,7 +88,9 @@ const COUPLING_HEIGHT = 4;
  * the art.
  */
 const RAIL_TILE = 32;
-const RAIL_HEIGHT = Math.round((railStrip.height * RAIL_TILE) / railStrip.width);
+const RAIL_HEIGHT = Math.round(
+  (railStrip.height * RAIL_TILE) / railStrip.width,
+);
 /**
  * The row of the art the near rail's cap runs along — the one a wheel would rest
  * on. The view is oblique, so it is well below the middle of the strip: above it
@@ -115,69 +117,34 @@ type TimelineEvent = { time: string; title: string; description: string };
 
 const EVENTS: TimelineEvent[] = [
   {
-    time: "Day 1 · 8:00 AM - 9:30 AM",
-    title: "Physical Check-In",
-    description: "Library",
+    time: "September 1, 2026",
+    title: "Registrations Open",
+    description: "",
   },
   {
-    time: "Day 1 · 8:30 AM - 9:30 AM",
-    title: "Breakfast",
-    description: "Cafeteria (1st Floor)",
+    time: "September 2, 2026",
+    title: "PPT Submissions Begin",
+    description: "",
   },
   {
-    time: "Day 1 · 10:00 AM - 11:00 AM",
-    title: "Opening Ceremony",
-    description: "KSOP (Hall)",
+    time: "September 30, 2026",
+    title: "PPT Submissions Close",
+    description: "",
   },
   {
-    time: "Day 1 · 11:00 AM Onwards",
-    title: "Start Hacking",
-    description: "Library (1st Floor)",
+    time: "October 3, 2026",
+    title: "Team Shortlisting Ends",
+    description: "",
   },
   {
-    time: "Day 1 · 1:30 PM - 2:30 PM",
-    title: "Lunch",
-    description: "Cafeteria (1st Floor)",
+    time: "October 10, 2026",
+    title: "Hackathon Begins",
+    description: "",
   },
   {
-    time: "Day 1 · 4:00 PM",
-    title: "Mentoring Round - 1",
-    description: "Library",
-  },
-  {
-    time: "Day 1 · 5:00 PM - 6:00 PM",
-    title: "Snacks",
-    description: "Cafeteria (1st Floor)",
-  },
-  {
-    time: "Day 1 · 6:30 PM - 7:30 PM",
-    title: "Workshops",
-    description: "Library",
-  },
-  {
-    time: "Day 1 · 8:30 PM - 9:30 PM",
-    title: "Dinner",
-    description: "Cafeteria (1st Floor)",
-  },
-  {
-    time: "Day 1 · 10:30 PM - 11:00 PM",
-    title: "Mentoring Round - 2",
-    description: "Library",
-  },
-  {
-    time: "Day 2 · 11:00 AM - 1:00 PM",
-    title: "Judging Round",
-    description: "Library",
-  },
-  {
-    time: "Day 2 · 1:00 PM - 2:00 PM",
-    title: "Lunch",
-    description: "Cafeteria (1st Floor)",
-  },
-  {
-    time: "Day 2 · 2:00 PM - 3:30 PM",
-    title: "Speaker Session & Closing Ceremony",
-    description: "Auditorium",
+    time: "October 11, 2026",
+    title: "Hackathon Ends",
+    description: "",
   },
 ];
 
@@ -333,7 +300,9 @@ function MineCart({ heading }: { heading: "left" | "right" }) {
   const hitch: CSSProperties = forward
     ? { left: "100%", marginLeft: CART_LEAD }
     : { right: "100%", marginRight: CART_LEAD };
-  const coupling: CSSProperties = forward ? { right: "100%" } : { left: "100%" };
+  const coupling: CSSProperties = forward
+    ? { right: "100%" }
+    : { left: "100%" };
 
   return (
     <div
@@ -445,10 +414,15 @@ export function TimelineSection() {
                 initial={
                   reduceMotion
                     ? { opacity: 0 }
-                    : { opacity: 0, x: isDesktop ? haul : isRight ? NUDGE : -NUDGE }
+                    : {
+                        opacity: 0,
+                        x: isDesktop ? haul : isRight ? NUDGE : -NUDGE,
+                      }
                 }
                 whileInView={{ opacity: 1, x: 0 }}
-                whileHover={reduceMotion ? undefined : { filter: "brightness(1.06)" }}
+                whileHover={
+                  reduceMotion ? undefined : { filter: "brightness(1.06)" }
+                }
                 viewport={VIEWPORT}
                 transition={{
                   duration: reduceMotion ? 0.3 : isDesktop ? 0.85 : 0.5,
