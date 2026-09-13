@@ -25,6 +25,14 @@ type BlockSectionProps = {
   tileSize?: number;
   textColor?: string;
   oreTextures?: StaticImageData[];
+  /** Full-bleed cover artwork behind the section, in place of the tiled `texture`. */
+  image?: StaticImageData;
+  /** Dark wash (0-1) over `image` only, leaving the edge band's texture at full brightness. */
+  imageTint?: number;
+  /** With `image`, how many blocks of `texture` hold the top and bottom edges before fading out. */
+  edgeBandBlocks?: number;
+  /** With `image`, cutouts pinned to the bottom corners in front of it — the render's near plane, kept sharp. */
+  flanks?: { left: StaticImageData; right: StaticImageData };
   /** Strength (0-1) of a dark wash over the background, for sections meant to read as deeper underground. */
   darken?: number;
   /** Disable the 1-block jagged seam, e.g. when a dedicated BlockTransition already handles this boundary. */
@@ -46,6 +54,10 @@ export function BlockSection({
   tileSize,
   textColor = "#f5f5f0",
   oreTextures,
+  image,
+  imageTint,
+  edgeBandBlocks,
+  flanks,
   darken = 0,
   seam = true,
   align = "center",
@@ -56,7 +68,16 @@ export function BlockSection({
 
   return (
     <section id={id} className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-24">
-      <BlockBackground texture={texture} fallbackColor={fallbackColor} tileSize={tileSize} />
+      <BlockBackground
+        id={id}
+        texture={texture}
+        fallbackColor={fallbackColor}
+        tileSize={tileSize}
+        image={image}
+        imageTint={imageTint}
+        edgeBandBlocks={edgeBandBlocks}
+        flanks={flanks}
+      />
       {oreTextures && oreTextures.length > 0 && (
         <OreOverlay textures={oreTextures} seed={seedFromId(id)} tileSize={tileSize} />
       )}

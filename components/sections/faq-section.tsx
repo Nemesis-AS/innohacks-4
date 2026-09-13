@@ -3,7 +3,7 @@ import { Accordion, type AccordionGroup, FaqLink } from "./accordion";
 import { BlockSection } from "./block-section";
 
 /** Community links are not live yet — placeholder until the Discord invite exists. */
-const DISCORD_URL = "#";
+const DISCORD_URL = "https://discord.gg/GqgtR84zwR";
 
 const FAQ_GROUPS: AccordionGroup[] = [
   {
@@ -113,7 +113,7 @@ const FAQ_GROUPS: AccordionGroup[] = [
         answer: (
           <>
             Ask the organisers by raising a ticket or posting on the{" "}
-            <FaqLink href={DISCORD_URL}>hacker-help-desk forum</FaqLink> on our Discord.
+            <FaqLink href={DISCORD_URL}>ask-organisers</FaqLink> on our Discord.
           </>
         ),
       },

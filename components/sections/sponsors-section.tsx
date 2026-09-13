@@ -3,6 +3,9 @@
 import { useReducedMotion } from "motion/react";
 import type { StaticImageData } from "next/image";
 import { useEffect, useRef, useState } from "react";
+import sponsorBg from "@/assets/SPONSOR_BG.png";
+import sponsorBgLeft from "@/assets/SPONSOR_BG_LEFT.png";
+import sponsorBgRight from "@/assets/SPONSOR_BG_RIGHT.png";
 import bedrockTexture from "@/assets/bedrock.png";
 import copperOre from "@/assets/copper_stone.png";
 import cherryPlanks from "@/assets/cherry_planks.png";
@@ -99,96 +102,112 @@ type Tier = {
 
 /**
  * Ordered rarest loot first. The title sponsor leads, then the host, then the paid
- * tiers. Every tier is its own advancement window, stacked down the section.
+ * tiers. Every tier is its own advancement window.
+ *
+ * Each inner array is one row down the section. The four tiers holding a single sponsor
+ * pair off two to a row — alone, a tier like that is a full-width window wrapped around
+ * one logo. Tiers with a real grid keep the width to themselves.
  */
-const TIERS: Tier[] = [
-  {
-    id: "title",
-    label: "Title Sponsor",
-    pip: TIER_COLORS.emerald,
-    icon: diamondOre,
-    gridClassName: "grid-cols-1",
-    step: 1,
-    aspect: 2.6,
-    slots: 1,
-    rowClassName: "mx-auto w-full max-w-sm",
-  },
-  {
-    id: "hosting",
-    label: "Hosting Partner",
-    pip: TIER_COLORS.diamond,
-    icon: grassBlock,
-    gridClassName: "grid-cols-1",
-    step: 1,
-    aspect: 2.6,
-    slots: 1,
-    rowClassName: "mx-auto w-full max-w-sm",
-  },
-  {
-    id: "refreshment",
-    label: "Refreshment Partner",
-    pip: TIER_COLORS.cherry,
-    icon: cherryPlanks,
-    gridClassName: "grid-cols-1",
-    step: 1,
-    aspect: 2.6,
-    slots: 1,
-    rowClassName: "mx-auto w-full max-w-sm",
-  },
-  {
-    id: "certificate",
-    label: "Certificate Partner",
-    pip: TIER_COLORS.parchment,
-    icon: endstone,
-    gridClassName: "grid-cols-1",
-    step: 1,
-    aspect: 2.6,
-    slots: 1,
-    rowClassName: "mx-auto w-full max-w-sm",
-  },
-  {
-    id: "platinum",
-    label: "Platinum",
-    pip: TIER_COLORS.platinum,
-    icon: quartzOre,
-    gridClassName: "grid-cols-1 sm:grid-cols-2",
-    step: 2,
-    aspect: 2.4,
-    slots: 2,
-    rowClassName: "mx-auto w-full max-w-xl",
-  },
-  {
-    id: "gold",
-    label: "Gold",
-    pip: TIER_COLORS.gold,
-    icon: goldOre,
-    gridClassName: "grid-cols-1 sm:grid-cols-2",
-    step: 2,
-    aspect: 2.4,
-    slots: 2,
-  },
-  {
-    id: "silver",
-    label: "Silver",
-    pip: TIER_COLORS.silver,
-    icon: ironOre,
-    gridClassName: "grid-cols-1 sm:grid-cols-3",
-    step: 3,
-    aspect: 2.2,
-    slots: 3,
-  },
-  {
-    id: "bronze",
-    label: "Technical Partner",
-    pip: TIER_COLORS.bronze,
-    icon: copperOre,
-    gridClassName: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
-    // lcm(2, 3, 4) — nine sponsors round up to twelve, filling the last row at 2, 3
-    // and 4 columns alike.
-    step: 12,
-    aspect: 2.2,
-    slots: 12,
-  },
+const TIER_ROWS: Tier[][] = [
+  [
+    {
+      id: "title",
+      label: "Title Sponsor",
+      pip: TIER_COLORS.emerald,
+      icon: diamondOre,
+      gridClassName: "grid-cols-1",
+      step: 1,
+      aspect: 2.6,
+      slots: 1,
+      rowClassName: "mx-auto w-full max-w-sm",
+    },
+    {
+      id: "hosting",
+      label: "Hosting Partner",
+      pip: TIER_COLORS.diamond,
+      icon: grassBlock,
+      gridClassName: "grid-cols-1",
+      step: 1,
+      aspect: 2.6,
+      slots: 1,
+      rowClassName: "mx-auto w-full max-w-sm",
+    },
+  ],
+  [
+    {
+      id: "refreshment",
+      label: "Refreshment Partner",
+      pip: TIER_COLORS.cherry,
+      icon: cherryPlanks,
+      gridClassName: "grid-cols-1",
+      step: 1,
+      aspect: 2.6,
+      slots: 1,
+      rowClassName: "mx-auto w-full max-w-sm",
+    },
+    {
+      id: "certificate",
+      label: "Certificate Partner",
+      pip: TIER_COLORS.parchment,
+      icon: endstone,
+      gridClassName: "grid-cols-1",
+      step: 1,
+      aspect: 2.6,
+      slots: 1,
+      rowClassName: "mx-auto w-full max-w-sm",
+    },
+  ],
+  [
+    {
+      id: "platinum",
+      label: "Platinum",
+      pip: TIER_COLORS.platinum,
+      icon: quartzOre,
+      gridClassName: "grid-cols-1 sm:grid-cols-2",
+      step: 2,
+      aspect: 2.4,
+      slots: 2,
+      rowClassName: "mx-auto w-full max-w-xl",
+    },
+  ],
+  [
+    {
+      id: "gold",
+      label: "Gold",
+      pip: TIER_COLORS.gold,
+      icon: goldOre,
+      gridClassName: "grid-cols-1 sm:grid-cols-2",
+      step: 2,
+      aspect: 2.4,
+      slots: 2,
+    },
+  ],
+  [
+    {
+      id: "silver",
+      label: "Silver",
+      pip: TIER_COLORS.silver,
+      icon: ironOre,
+      gridClassName: "grid-cols-1 sm:grid-cols-3",
+      step: 3,
+      aspect: 2.2,
+      slots: 3,
+    },
+  ],
+  [
+    {
+      id: "bronze",
+      label: "Technical Partner",
+      pip: TIER_COLORS.bronze,
+      icon: copperOre,
+      gridClassName: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
+      // lcm(2, 3, 4) — nine sponsors round up to twelve, filling the last row at 2, 3
+      // and 4 columns alike.
+      step: 12,
+      aspect: 2.2,
+      slots: 12,
+    },
+  ],
 ];
 
 // Add sponsors here as they're confirmed. Unclaimed slots render as locked "???" frames.
@@ -199,6 +218,7 @@ const SPONSORS: Sponsor[] = [
     logo: TbiLogo,
     logoBg: "#ffffff",
     alt: "KIET TBI LOGO",
+    href: "https://www.tbi-kiet.in",
   },
   {
     name: "Devfolio",
@@ -453,7 +473,19 @@ export function SponsorsSection() {
       id="sponsors"
       eyebrow="▸ The bedrock InnoHacks is built on"
       title="Sponsors"
+      image={sponsorBg}
+      // The near banks, cut out of that same render and pinned back on top of it. The section
+      // runs several screens deep, so `object-cover` crops the image to a narrow middle strip
+      // and throws away exactly the sharp foreground that gave the shot its depth — this puts
+      // it back, unstretched and untinted, framing the CTAs at the section's floor.
+      flanks={{ left: sponsorBgLeft, right: sponsorBgRight }}
+      // Bedrock is the fringe now, not the field: three blocks of it hold the top and
+      // bottom edges flush against the neighbouring BlockTransition strips, then dissolve
+      // into the scene. Three because that's ROWS in block-transition.tsx.
       texture={bedrockTexture}
+      edgeBandBlocks={3}
+      // Light — the render is already a night scene, and the windows carry their own panels.
+      imageTint={0.25}
       fallbackColor="#2b2b2f"
       // No ore veins here: the windows already carry the section, and scattered ore
       // behind seven stacked panels just crowds them.
@@ -470,8 +502,20 @@ export function SponsorsSection() {
           mismatch — see `u()` in util/ui.ts.
         */}
         <div className="relative z-10 flex w-full flex-col gap-6 [--adv-u:2] lg:gap-8 lg:[--adv-u:3]">
-          {TIERS.map((tier) => (
-            <TierWindow key={tier.id} tier={tier} reduceMotion={reduceMotion} />
+          {TIER_ROWS.map((row) => (
+            <div
+              key={row.map((tier) => tier.id).join("-")}
+              // A pair splits the width from md up and stacks below it, where half of an
+              // already narrow column would squeeze the logo frame. `items-start` so a row
+              // never stretches the shorter window to match its neighbour.
+              className={
+                row.length > 1 ? "grid items-start gap-6 md:grid-cols-2 lg:gap-8" : undefined
+              }
+            >
+              {row.map((tier) => (
+                <TierWindow key={tier.id} tier={tier} reduceMotion={reduceMotion} />
+              ))}
+            </div>
           ))}
         </div>
       </div>

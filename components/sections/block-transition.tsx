@@ -19,14 +19,20 @@ type BlockTransitionProps = {
   bottomDarken?: number;
 };
 
-function buildColumns(id: string, count: number) {
+/**
+ * A smooth random-walk boundary across `count` columns: per column, `true` for the rows
+ * above the boundary and `false` below it, with the odd stray block flipped near the line
+ * for an eroded look. Exported because BlockFringe draws the same strata edge against
+ * transparency rather than against a second texture.
+ */
+export function buildColumns(id: string, count: number, rows: number = ROWS) {
   const random = mulberry32(seedFromId(id));
-  let level = Math.round(random() * ROWS);
+  let level = Math.round(random() * rows);
 
   return Array.from({ length: count }, () => {
-    level = Math.min(ROWS, Math.max(0, level + Math.floor(random() * 3) - 1));
+    level = Math.min(rows, Math.max(0, level + Math.floor(random() * 3) - 1));
     const boundary = level;
-    return Array.from({ length: ROWS }, (_, row) => {
+    return Array.from({ length: rows }, (_, row) => {
       let useTop = row < boundary;
       if (Math.abs(row - boundary) <= 1 && random() < SPECKLE_CHANCE) useTop = !useTop;
       return useTop;

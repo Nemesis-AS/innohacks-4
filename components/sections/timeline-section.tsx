@@ -181,6 +181,74 @@ const EVENTS: TimelineEvent[] = [
   },
 ];
 
+// const EVENTS: TimelineEvent[] = [
+//   {
+//     time: "Day 1 · 8:00 AM - 9:30 AM",
+//     title: "Physical Check-In",
+//     description: "Library",
+//   },
+//   {
+//     time: "Day 1 · 8:30 AM - 9:30 AM",
+//     title: "Breakfast",
+//     description: "Cafeteria (1st Floor)",
+//   },
+//   {
+//     time: "Day 1 · 10:00 AM - 11:00 AM",
+//     title: "Opening Ceremony",
+//     description: "KSOP (Hall)",
+//   },
+//   {
+//     time: "Day 1 · 11:00 AM Onwards",
+//     title: "Start Hacking",
+//     description: "Library (1st Floor)",
+//   },
+//   {
+//     time: "Day 1 · 1:30 PM - 2:30 PM",
+//     title: "Lunch",
+//     description: "Cafeteria (1st Floor)",
+//   },
+//   {
+//     time: "Day 1 · 4:00 PM",
+//     title: "Mentoring Round - 1",
+//     description: "Library",
+//   },
+//   {
+//     time: "Day 1 · 5:00 PM - 6:00 PM",
+//     title: "Snacks",
+//     description: "Cafeteria (1st Floor)",
+//   },
+//   {
+//     time: "Day 1 · 6:30 PM - 7:30 PM",
+//     title: "Workshops",
+//     description: "Library",
+//   },
+//   {
+//     time: "Day 1 · 8:30 PM - 9:30 PM",
+//     title: "Dinner",
+//     description: "Cafeteria (1st Floor)",
+//   },
+//   {
+//     time: "Day 1 · 10:30 PM - 11:00 PM",
+//     title: "Mentoring Round - 2",
+//     description: "Library",
+//   },
+//   {
+//     time: "Day 2 · 11:00 AM - 1:00 PM",
+//     title: "Judging Round",
+//     description: "Library",
+//   },
+//   {
+//     time: "Day 2 · 1:00 PM - 2:00 PM",
+//     title: "Lunch",
+//     description: "Cafeteria (1st Floor)",
+//   },
+//   {
+//     time: "Day 2 · 2:00 PM - 3:30 PM",
+//     title: "Speaker Session & Closing Ceremony",
+//     description: "Auditorium",
+//   },
+// ];
+
 /**
  * Tracks the `md` breakpoint, the point where the layout goes from one column
  * beside a left-hand post to two columns either side of a centred one.
