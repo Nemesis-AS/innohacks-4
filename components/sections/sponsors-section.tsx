@@ -43,6 +43,16 @@ import TruScholarLogo from "@/assets/sponsors/truscholar.jpeg";
 import WhereUElevateLogo from "@/assets/sponsors/whereuelevate.png";
 import PruneLogo from "@/assets/sponsors/prune.jpeg";
 
+import DiamondIcon from "@/assets/sponsors/icons/diamond.png";
+import GoldIcon from "@/assets/sponsors/icons/gold_ingot.png";
+import IronIcon from "@/assets/sponsors/icons/iron_ingot.png";
+import CopperIcon from "@/assets/sponsors/icons/copper_ingot.png";
+import RedstoneIcon from "@/assets/sponsors/icons/redstone.png";
+import LapisIcon from "@/assets/sponsors/icons/lapis_lazuli.png";
+import CoalIcon from "@/assets/sponsors/icons/coal.png";
+import GlowstoneIcon from "@/assets/sponsors/icons/glowstone_dust.png";
+import QuartzIcon from "@/assets/sponsors/icons/quartz.png";
+
 import { TIER_COLORS } from "@/util/ui";
 
 /**
@@ -117,7 +127,7 @@ const TIER_ROWS: Tier[][] = [
       id: "title",
       label: "Title Sponsor",
       pip: TIER_COLORS.emerald,
-      icon: diamondOre,
+      icon: DiamondIcon,
       gridClassName: "grid-cols-1",
       step: 1,
       aspect: 2.6,
@@ -130,7 +140,7 @@ const TIER_ROWS: Tier[][] = [
       id: "hosting",
       label: "Hosting Partner",
       pip: TIER_COLORS.diamond,
-      icon: grassBlock,
+      icon: LapisIcon,
       gridClassName: "grid-cols-1",
       step: 1,
       aspect: 2.6,
@@ -141,7 +151,7 @@ const TIER_ROWS: Tier[][] = [
       id: "refreshment",
       label: "Refreshment Partner",
       pip: TIER_COLORS.cherry,
-      icon: cherryPlanks,
+      icon: RedstoneIcon,
       gridClassName: "grid-cols-1",
       step: 1,
       aspect: 2.6,
@@ -154,7 +164,7 @@ const TIER_ROWS: Tier[][] = [
       id: "certificate",
       label: "Certificate Partner",
       pip: TIER_COLORS.parchment,
-      icon: endstone,
+      icon: GlowstoneIcon,
       gridClassName: "grid-cols-1",
       step: 1,
       aspect: 2.6,
@@ -165,7 +175,7 @@ const TIER_ROWS: Tier[][] = [
       id: "ai",
       label: "AI Partner",
       pip: TIER_COLORS.white,
-      icon: deepslate,
+      icon: CoalIcon,
       gridClassName: "grid-cols-1",
       step: 1,
       aspect: 2.6,
@@ -178,7 +188,7 @@ const TIER_ROWS: Tier[][] = [
       id: "platinum",
       label: "Platinum",
       pip: TIER_COLORS.platinum,
-      icon: quartzOre,
+      icon: QuartzIcon,
       gridClassName: "grid-cols-1 sm:grid-cols-2",
       step: 2,
       aspect: 2.4,
@@ -191,7 +201,7 @@ const TIER_ROWS: Tier[][] = [
       id: "gold",
       label: "Gold",
       pip: TIER_COLORS.gold,
-      icon: goldOre,
+      icon: GoldIcon,
       gridClassName: "grid-cols-1 sm:grid-cols-2",
       step: 2,
       aspect: 2.4,
@@ -203,7 +213,7 @@ const TIER_ROWS: Tier[][] = [
       id: "silver",
       label: "Silver",
       pip: TIER_COLORS.silver,
-      icon: ironOre,
+      icon: IronIcon,
       gridClassName: "grid-cols-1 sm:grid-cols-3",
       step: 3,
       aspect: 2.2,
@@ -215,7 +225,7 @@ const TIER_ROWS: Tier[][] = [
       id: "bronze",
       label: "Technical Partner",
       pip: TIER_COLORS.bronze,
-      icon: copperOre,
+      icon: CopperIcon,
       gridClassName: "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4",
       // lcm(2, 3, 4) — nine sponsors round up to twelve, filling the last row at 2, 3
       // and 4 columns alike.

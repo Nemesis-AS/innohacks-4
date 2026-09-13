@@ -19,10 +19,14 @@ import { FloatingIslandBase } from "@/components/sections/floating-island-base";
 import { PreviousEventsSection } from "@/components/sections/previous-events-section";
 import { PrizesSection } from "@/components/sections/prizes-section";
 import { SponsorsSection } from "@/components/sections/sponsors-section";
-import { DEEPSLATE_DARKEN, TimelineSection } from "@/components/sections/timeline-section";
+import {
+  DEEPSLATE_DARKEN,
+  TimelineSection,
+} from "@/components/sections/timeline-section";
 import { TracksSection } from "@/components/sections/tracks-section";
 import { VoidFooter } from "@/components/sections/void-footer";
 import { EVENT } from "@/util/event";
+import WoodenSeam from "@/components/sections/wooden-seam";
 
 /** schema.org Event data, so search results can surface the dates and venue directly. */
 const eventJsonLd = {
@@ -66,9 +70,15 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
       />
       <HomeHero />
+      <WoodenSeam />
       {/* <BlockTransition id="hero-about" top={grassTexture} bottom={dirtTexture} /> */}
       <AboutSection />
-      <BlockTransition id="about-tracks" top={dirtTexture} bottom={stoneTexture} />
+      <WoodenSeam />
+      {/* <BlockTransition
+        id="about-tracks"
+        top={dirtTexture}
+        bottom={stoneTexture}
+      /> */}
       <TracksSection />
       <BlockTransition
         id="tracks-timeline"
@@ -84,9 +94,17 @@ export default function Home() {
         topDarken={DEEPSLATE_DARKEN}
       />
       <PrizesSection />
-      <BlockTransition id="prizes-sponsors" top={sculkTexture} bottom={bedrockTexture} />
+      <BlockTransition
+        id="prizes-sponsors"
+        top={sculkTexture}
+        bottom={bedrockTexture}
+      />
       <SponsorsSection />
-      <BlockTransition id="sponsors-previous-events" top={bedrockTexture} bottom={netherrackTexture} />
+      <BlockTransition
+        id="sponsors-previous-events"
+        top={bedrockTexture}
+        bottom={netherrackTexture}
+      />
       <PreviousEventsSection />
       <BlockTransition
         id="previous-events-partners"
@@ -101,7 +119,11 @@ export default function Home() {
         bottom={bedrockTexture}
         topDarken={NETHER_BRICK_DARKEN}
       />
-      <BlockTransition id="bedrock-endstone" top={bedrockTexture} bottom={endstoneTexture} />
+      <BlockTransition
+        id="bedrock-endstone"
+        top={bedrockTexture}
+        bottom={endstoneTexture}
+      />
       {/* <BlockTransition id="bedrock-endstone-transitions" top={netherrackTexture} bottom={endstoneTexture} /> */}
       {/* <BlockTransition id="previous-events-faq" top={netherrackTexture} bottom={endstoneTexture} /> */}
       <FaqSection />

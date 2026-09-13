@@ -42,3 +42,4 @@ next-env.d.ts
 
 # large video master (compressed copy lives in public/)
 assets/hero.mp4
+tmp/

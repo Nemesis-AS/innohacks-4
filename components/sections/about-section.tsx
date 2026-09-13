@@ -3,6 +3,8 @@
 import { motion, useReducedMotion } from "motion/react";
 import dirtTexture from "@/assets/dirt.png";
 import AboutBgImg from "@/assets/backgrounds/about_bg.png";
+import AboutBgLeft from "@/assets/backgrounds/about_left.png";
+import AboutBgRight from "@/assets/backgrounds/about_right.png";
 import { VIEWPORT, DUR_REVEAL, EASE } from "@/util/motion";
 import { PIXEL_FONT } from "@/util/ui";
 import { BlockSection } from "./block-section";
@@ -23,6 +25,10 @@ export function AboutSection() {
       align="left"
       image={AboutBgImg}
       imageTint={0.25}
+      flanks={{
+        left: AboutBgLeft,
+        right: AboutBgRight,
+      }}
       // edgeBandBlocks={3}
     >
       <div className="grid w-full gap-6 md:grid-cols-2 md:items-stretch md:gap-0">
@@ -40,7 +46,10 @@ export function AboutSection() {
             >
               About
             </h2>
-            <p className="text-sm md:text-base" style={{ color: `${INK}d9`, fontFamily: PIXEL_FONT }}>
+            <p
+              className="text-sm md:text-base"
+              style={{ color: `${INK}d9`, fontFamily: PIXEL_FONT }}
+            >
               Innohacks 4.0 is Innogeeks’ flagship 24-hour national hackathon,
               bringing together the brightest student innovators to solve
               real-world challenges through technology. Hosted at KIET Deemed to

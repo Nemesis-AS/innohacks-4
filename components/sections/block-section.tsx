@@ -5,14 +5,22 @@ import { BlockBackground } from "./block-background";
 import { BlockSeam, seedFromId } from "./block-seam";
 import { OreOverlay } from "./ore-overlay";
 
-import { EMBOSS_LIGHT, PIXEL_FONT, SHADOW_HEADING, SHADOW_SMALL } from "@/util/ui";
+import {
+  EMBOSS_LIGHT,
+  PIXEL_FONT,
+  SHADOW_HEADING,
+  SHADOW_SMALL,
+} from "@/util/ui";
+import Image from "next/image";
+import { div } from "motion/react-client";
 
 /** Rough perceived-lightness test so dark ink (FAQ's endstone) gets a light emboss, not a dark drop. */
 function isDarkInk(hex: string) {
   const m = /^#([0-9a-f]{6})$/i.exec(hex);
   if (!m) return false;
   const n = parseInt(m[1], 16);
-  const luma = 0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
+  const luma =
+    0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
   return luma < 128;
 }
 
@@ -63,11 +71,24 @@ export function BlockSection({
   align = "center",
   maxWidthClassName,
   children,
+  // woodenSeam = true,
 }: BlockSectionProps) {
   const isLeft = align === "left";
 
   return (
-    <section id={id} className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-24">
+    <section
+      id={id}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-24"
+    >
+      {/* {woodenSeam && (
+        <div
+          className="absolute top-0 z-10 pointer-events-none h-32 -translate-y-1/2 w-full bg-repeat-x bg-contain"
+          style={{
+            backgroundImage: `url("${WoodenSeam.src}")`
+          }}
+        >
+        </div>
+      )} */}
       <BlockBackground
         id={id}
         texture={texture}
@@ -79,14 +100,29 @@ export function BlockSection({
         flanks={flanks}
       />
       {oreTextures && oreTextures.length > 0 && (
-        <OreOverlay textures={oreTextures} seed={seedFromId(id)} tileSize={tileSize} />
+        <OreOverlay
+          textures={oreTextures}
+          seed={seedFromId(id)}
+          tileSize={tileSize}
+        />
       )}
       {darken > 0 && (
         // Above the ore veins so texture and ore darken together — tinting only the
         // background would leave the ore tiles at full brightness, floating on top.
-        <div className="absolute inset-0 -z-[4]" style={{ backgroundColor: wash(darken) }} aria-hidden />
+        <div
+          className="absolute inset-0 -z-[4]"
+          style={{ backgroundColor: wash(darken) }}
+          aria-hidden
+        />
       )}
-      {seam && <BlockSeam seed={seedFromId(id)} color={fallbackColor} textureSrc={texture?.src} darken={darken} />}
+      {seam && (
+        <BlockSeam
+          seed={seedFromId(id)}
+          color={fallbackColor}
+          textureSrc={texture?.src}
+          darken={darken}
+        />
+      )}
       <div
         className={`relative z-10 flex w-full flex-col gap-4 ${
           maxWidthClassName ?? (isLeft ? "max-w-5xl" : "max-w-2xl")
