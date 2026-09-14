@@ -8,9 +8,9 @@ import { useEffect, useRef } from "react";
 // too low and the video visibly lags behind the page.
 const LERP = 0.12;
 
-// Don't bother seeking for less than a frame of the 30fps encode; assigning `currentTime`
+// Don't bother seeking for less than a frame of the 60fps encode; assigning `currentTime`
 // on every rAF tick queues seeks faster than the decoder retires them, which reads as stutter.
-const FRAME = 1 / 30;
+const FRAME = 1 / 60;
 
 // Scrubbing only earns its keep on desktop: a phone has no long, smooth wheel scroll to drive
 // it and seeks a lot worse, so below this width the same footage just plays on a loop.
