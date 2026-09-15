@@ -52,6 +52,7 @@ import LapisIcon from "@/assets/sponsors/icons/lapis_lazuli.png";
 import CoalIcon from "@/assets/sponsors/icons/coal.png";
 import GlowstoneIcon from "@/assets/sponsors/icons/glowstone_dust.png";
 import QuartzIcon from "@/assets/sponsors/icons/quartz.png";
+import EnderEyeIcon from "@/assets/sponsors/icons/ender_eye.png";
 
 import { TIER_COLORS } from "@/util/ui";
 
@@ -66,6 +67,24 @@ const GLINT_STAGGER = 1.4;
 
 /** How long a tapped tooltip holds before folding away. Touch has no hover to end it. */
 const TAP_HOLD_MS = 2200;
+/**
+ * Added per character of blurb. The base is tuned for a name and a tier — two things you
+ * recognise rather than read. A sentence has to actually be read, so it buys its own
+ * time: 80ms a character is about twelve a second, the slow end of adult reading, which
+ * is the end to aim at for a chunky pixel font held at arm's length.
+ */
+const TAP_HOLD_PER_CHAR_MS = 80;
+/** Ceiling, so a sponsor who writes an essay can't pin a panel over the grid. */
+const TAP_HOLD_MAX_MS = 9000;
+
+/** Hold for one frame: the base beat, plus reading time if its sponsor carries a blurb. */
+function tapHoldMs(sponsor?: SponsorMark) {
+  if (!sponsor?.blurb) return TAP_HOLD_MS;
+  return Math.min(
+    TAP_HOLD_MAX_MS,
+    TAP_HOLD_MS + sponsor.blurb.length * TAP_HOLD_PER_CHAR_MS,
+  );
+}
 
 /**
  * Shared sizing for the two CTAs. MinecraftButton's `className` replaces its default
@@ -80,6 +99,7 @@ type TierId =
   | "refreshment"
   | "certificate"
   | "ai"
+  | "media"
   | "platinum"
   | "gold"
   | "silver"
@@ -134,8 +154,6 @@ const TIER_ROWS: Tier[][] = [
       slots: 1,
       rowClassName: "mx-auto w-full max-w-sm",
     },
-  ],
-  [
     {
       id: "hosting",
       label: "Hosting Partner",
@@ -147,6 +165,8 @@ const TIER_ROWS: Tier[][] = [
       slots: 1,
       rowClassName: "mx-auto w-full max-w-sm",
     },
+  ],
+  [
     {
       id: "refreshment",
       label: "Refreshment Partner",
@@ -158,8 +178,6 @@ const TIER_ROWS: Tier[][] = [
       slots: 1,
       rowClassName: "mx-auto w-full max-w-sm",
     },
-  ],
-  [
     {
       id: "certificate",
       label: "Certificate Partner",
@@ -171,11 +189,24 @@ const TIER_ROWS: Tier[][] = [
       slots: 1,
       rowClassName: "mx-auto w-full max-w-sm",
     },
+  ],
+  [
     {
       id: "ai",
       label: "AI Partner",
       pip: TIER_COLORS.white,
       icon: CoalIcon,
+      gridClassName: "grid-cols-1",
+      step: 1,
+      aspect: 2.6,
+      slots: 1,
+      rowClassName: "mx-auto w-full max-w-sm",
+    },
+    {
+      id: "media",
+      label: "Media Partner",
+      pip: TIER_COLORS.parchment,
+      icon: EnderEyeIcon,
       gridClassName: "grid-cols-1",
       step: 1,
       aspect: 2.6,
@@ -237,6 +268,12 @@ const TIER_ROWS: Tier[][] = [
 ];
 
 // Add sponsors here as they're confirmed. Unclaimed slots render as locked "???" frames.
+//
+// `blurb` is optional, and takes the tier line's place in the hover tooltip for a sponsor
+// who supplied copy of their own. Keep it short — it wraps at roughly 36 characters,
+// and the panel grows upward over the window above:
+//
+//   blurb: "Hosting registrations, submissions and judging for InnoHacks 4.0.",
 const SPONSORS: Sponsor[] = [
   {
     name: "KIET TBI",
@@ -269,6 +306,8 @@ const SPONSORS: Sponsor[] = [
     href: "https://tin.computer",
     logoBg: "#ffffff",
     alt: "TIN COMPUTER LOGO",
+    blurb:
+      "Tin Computer is an autonomous growth agent. Every eligible InnoHacks 4.0 team gets $299 in Tin Computer credits, one month of the Growth plan. Credits cover up to 100 teams.",
   },
   {
     name: "N8N",
@@ -351,7 +390,7 @@ const SPONSORS: Sponsor[] = [
   },
   {
     name: "Eventopia",
-    tier: "bronze",
+    tier: "media",
     logoBg: "#6c4294",
     logo: EventopiaLogo,
     alt: "EVENTOPIA LOGO",
@@ -460,7 +499,7 @@ function TierWindow({
     if (viaTouch) {
       tapTimer.current = setTimeout(
         () => setActive((current) => (current === index ? null : current)),
-        TAP_HOLD_MS,
+        tapHoldMs(filled[index]),
       );
     }
   };

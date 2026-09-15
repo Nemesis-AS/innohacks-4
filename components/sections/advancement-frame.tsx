@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import type { StaticImageData } from "next/image";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useId, useLayoutEffect, useRef, useState } from "react";
 
 import { Glint } from "@/components/minecraft-ui";
 import { DUR_MICRO, EASE, POP_SPRING } from "@/util/motion";
@@ -38,6 +38,45 @@ const TAIL_CLIP =
 /** Keep-out from the viewport edge when the tooltip has to slide back into view. */
 const EDGE_PAD = 8;
 
+/**
+ * Width of a tooltip carrying a blurb, in sprite pixels — so the measure stays the same
+ * number of characters at every `--adv-u`. A rem cap would hand a phone a *longer* line
+ * than the desktop, which is backwards.
+ *
+ * Minecraft.otf's em box is 18 units and prose averages 0.6em a glyph, so at
+ * `u(BLURB_FONT)` a character is ~3.6u. Take the u(12) of padding and u(2) of outline
+ * off the panel and the two bounds come out at ~27 and ~36 characters.
+ *
+ * Neither is taste. The floor is the longest sponsor name — ~92u in the u(8) title bar —
+ * rounded up, so nothing that fits today starts truncating, and two blurbed frames side
+ * by side read as one card repeated rather than two different shapes. The ceiling is the
+ * widest the panel can be and still clear a 320px phone before the viewport clamp cuts
+ * in: 144 x 2 is exactly 320 less the 2rem keep-out.
+ *
+ * The floor is deliberately *not* clamped to the viewport — u(112) is 224px, inside any
+ * real device. Raise it past ~140 and it has to become `min(u(N), 100%)`, or it starts
+ * fighting the edge shift below.
+ */
+const BLURB_MIN_W = 112;
+const BLURB_MAX_W = 144;
+
+/**
+ * A blurb sets one step smaller than the tier line it stands in for. The tier line is a
+ * label you glance at; a blurb is prose you read several lines of, and at u(7) a long one
+ * shouts over the name above it. u(6) also buys back five characters a line, which is
+ * what keeps a two-sentence blurb from running to six.
+ */
+const BLURB_FONT = 6;
+
+/**
+ * The blurb's line advance, as a `u()` length rather than a ratio. This font's em box is
+ * its glyph box, so a u(6) line is exactly 6 sprite pixels tall and u(8) is that plus a
+ * pixel of leading each side — vanilla's own spacing, every baseline on the grid. A
+ * unitless 1.3 lands the second line on a half pixel at `--adv-u:3` and drifts the block
+ * off the grid the rest of the panel is built on.
+ */
+const BLURB_LINE_H = 8;
+
 /** One sponsor's mark. Shaped to spread from the section's data, the way `Partner` does. */
 export type SponsorMark = {
   name: string;
@@ -47,6 +86,13 @@ export type SponsorMark = {
   logoBg?: string;
   /** Defaults to name. */
   alt?: string;
+  /**
+   * Optional sponsor copy, taking the tier line's place in the tooltip. Most sponsors
+   * won't have one, and without it the card is the two-line tooltip it has always been.
+   * Keep it to a sentence — it wraps at ~36 characters, and the panel grows upward, out
+   * of the well and over whatever window sits above.
+   */
+  blurb?: string;
 };
 
 type AdvancementFrameProps = {
@@ -70,7 +116,8 @@ type AdvancementFrameProps = {
 
 /**
  * Vanilla item tooltip as the advancements screen draws it: the gold title bar carrying
- * the name, and the tier beneath it.
+ * the name, and the tier beneath it — or, for a sponsor who supplied copy of their own,
+ * that copy in the tier's place.
  *
  * It is one plate, not two boxes. The outer element owns the only outline and the only
  * chamfer; the gold bar inside keeps square corners and a black bottom edge, and the
@@ -84,11 +131,14 @@ type AdvancementFrameProps = {
 function AdvancementTooltip({
   name,
   description,
+  blurb,
   accent,
   reduceMotion,
 }: {
   name: string;
   description: string;
+  /** Optional sponsor copy. Displaces `description` on the plate when it's there. */
+  blurb?: string;
   accent: string;
   reduceMotion: boolean;
 }) {
@@ -149,7 +199,16 @@ function AdvancementTooltip({
             // the distance it was measured to need. This is a pure post-layout nudge,
             // and it's safe here because motion animates the wrapper, not the panel.
             transform: shift ? `translateX(${shift}px)` : undefined,
-            maxWidth: "min(22rem, calc(100vw - 2rem))",
+            // Two nowrap lines shrink-wrap themselves and the 22rem is only a backstop,
+            // so the plain case is left exactly as it was. A blurb moves both bounds onto
+            // the sprite grid instead, so its measure survives the breakpoint. The floor
+            // isn't what forces the wrap — `w-max` is max-content, and a paragraph's
+            // max-content is the whole sentence unwrapped, so the panel reaches the cap
+            // on its own. It's there to keep every blurbed card the one width.
+            minWidth: blurb ? u(BLURB_MIN_W) : undefined,
+            maxWidth: blurb
+              ? `min(${u(BLURB_MAX_W)}, calc(100vw - 2rem))`
+              : "min(22rem, calc(100vw - 2rem))",
             border: `${u(OUTLINE)} solid ${GUI.outline}`,
             clipPath: chamfer(),
           }}
@@ -173,24 +232,40 @@ function AdvancementTooltip({
           </div>
           {/* Flat, no bevel — vanilla's description area is unlit. */}
           <div
-            className="overflow-hidden text-ellipsis whitespace-nowrap"
+            className={
+              // A blurb is the only thing on this plate allowed to wrap. `break-words`
+              // so a long compound or a bare URL can't shove the panel past its cap, and
+              // `text-balance` because a one-word last line is glaring in a font this
+              // chunky — it quietly gives up past ~6 lines, which a sentence won't reach.
+              blurb
+                ? "text-balance break-words"
+                : "overflow-hidden text-ellipsis whitespace-nowrap"
+            }
             style={{
               // Near-opaque, not the 0.86 this used to be: the tooltip floats over the
               // window's *light grey* title bar, and at 0.86 the bar's ink ghosted
               // straight through the tier line. The 4% left is all the translucency
               // that survives a light backdrop.
               backgroundColor: `color-mix(in srgb, ${GUI.wellFill} 96%, transparent)`,
+              // The accent stays even once the tier label doesn't. This band is the
+              // tier's colour everywhere in the section, and a blurb in neutral grey
+              // would put two colour rules inside one grid — the label is what a blurb
+              // trades away, not the tier.
               color: accent,
               fontFamily: PIXEL_FONT,
               // A step down from the name, so it reads as subordinate — and the width
-              // that gives back is what stops "Refreshment Partner" truncating at lg.
-              fontSize: u(7),
-              lineHeight: 1,
-              padding: `${u(4)} ${u(6)}`,
+              // that gives back is what stops "Refreshment Partner" truncating at lg. A
+              // blurb steps down once more; see BLURB_FONT.
+              fontSize: blurb ? u(BLURB_FONT) : u(7),
+              lineHeight: blurb ? u(BLURB_LINE_H) : 1,
+              // u(3) under a blurb, not u(4): a wrapped block's first and last line boxes
+              // already carry half a leading each, so u(4) would optically over-pad it
+              // against the single tier line it stands in for.
+              padding: blurb ? `${u(3)} ${u(6)}` : `${u(4)} ${u(6)}`,
               textShadow: SHADOW_SMALL,
             }}
           >
-            {description}
+            {blurb ?? description}
           </div>
         </div>
       </div>
@@ -231,6 +306,10 @@ export function AdvancementFrame({
   active,
   onActivate,
 }: AdvancementFrameProps) {
+  // Ahead of the unclaimed-slot return below: a hook can't sit after an early exit, and
+  // an id nothing points at costs nothing.
+  const blurbId = useId();
+
   const light = sponsor ? GUI.earnedLight : GUI.panelLight;
   const body = sponsor ? GUI.earnedBody : GUI.panelBody;
   const shade = sponsor ? GUI.earnedShade : GUI.panelShade;
@@ -293,6 +372,11 @@ export function AdvancementFrame({
   }
 
   const label = `${sponsor.name} — ${tierLabel}`;
+  // The tooltip is aria-hidden chrome, so a blurb has to reach a screen reader by some
+  // other route. A description rather than part of the name: in a list of links this
+  // should still announce "Devfolio — Hosting Partner", with the sentence following it.
+  // It also hands back the tier label that a blurb takes away from sighted users.
+  const describedBy = sponsor.blurb ? blurbId : undefined;
   // overflow-hidden clips the glint sweep; the tooltip lives outside this box, on the
   // wrapper, so it can rise past the frame and out of the well.
   const faceClassName = `group relative block h-full w-full overflow-hidden ${FOCUS_RING}`;
@@ -326,15 +410,33 @@ export function AdvancementFrame({
           target="_blank"
           rel="noreferrer noopener"
           aria-label={label}
+          aria-describedby={describedBy}
           className={faceClassName}
         >
           {face}
         </a>
       ) : (
         // Focusable even without a link, so keyboard users reach the tooltip at all.
-        <div role="img" aria-label={label} tabIndex={0} className={faceClassName}>
+        <div
+          role="img"
+          aria-label={label}
+          aria-describedby={describedBy}
+          tabIndex={0}
+          className={faceClassName}
+        >
           {face}
         </div>
+      )}
+      {/*
+        Outside the face, not in it: `aria-label` already overrides children for the name,
+        so in there this would be dead weight in the tree. `sr-only` is absolutely
+        positioned and clipped to a pixel, so neither the `relative` parent nor the face's
+        own overflow-hidden has any say over it.
+      */}
+      {sponsor.blurb && (
+        <span id={blurbId} className="sr-only">
+          {sponsor.blurb}
+        </span>
       )}
       <AnimatePresence>
         {active && (
@@ -342,6 +444,7 @@ export function AdvancementFrame({
             key="tip"
             name={sponsor.name}
             description={tierLabel}
+            blurb={sponsor.blurb}
             accent={accent}
             reduceMotion={reduceMotion}
           />
